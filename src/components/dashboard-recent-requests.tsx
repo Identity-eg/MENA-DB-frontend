@@ -4,7 +4,7 @@ import {
   getRequestsQueryOptions,
   useGetRequests,
 } from '@/apis/requests/get-requests'
-import type { CompanyRequestListItem } from '@/types/company-request'
+import type { TRequest } from '@/types/request'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -30,7 +30,7 @@ function formatPrice(estimatedPrice: number, finalPrice: number | null) {
 
 export function DashboardRecentRequests() {
   const { data } = useGetRequests()
-  const allRequests: Array<CompanyRequestListItem> = data.data ?? []
+  const allRequests: Array<TRequest> = data.data
   const recentRequests = allRequests.slice(0, RECENT_LIMIT)
 
   return (
@@ -71,8 +71,13 @@ export function DashboardRecentRequests() {
                     {formatRequestId(req.id)}
                   </TableCell>
                   <TableCell>
-                    {req.company.nameEn}
-                    {req.company.nameAr ? ` (${req.company.nameAr})` : ''}
+                    {req.companies
+                      .map((c) =>
+                        c.nameAr ? `${c.nameEn} (${c.nameAr})` : c.nameEn,
+                      )
+                      .join(', ') || '—'}
+                    {req.individuals.length > 0 &&
+                      ` · ${req.individuals.length} individual${req.individuals.length !== 1 ? 's' : ''}`}
                   </TableCell>
                   <TableCell>
                     <StatusPill status={req.status} />

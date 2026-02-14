@@ -1,9 +1,9 @@
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { request } from '../request'
 import type { TApiResponseSingle } from '@/types/api-response-single'
-import type { CompanyRequestListItem } from '@/types/company-request'
+import type { TRequest } from '@/types/request'
 
-type GetRequestsData = TApiResponseSingle<Array<CompanyRequestListItem>>
+type GetRequestsData = TApiResponseSingle<Array<TRequest>>
 type GetRequestsQueryOptionsOverride = Omit<
   Parameters<typeof useSuspenseQuery<GetRequestsData>>[0],
   'queryKey' | 'queryFn'

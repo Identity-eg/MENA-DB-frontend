@@ -26,7 +26,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: login,
     onSuccess: async (data) => {
-      await setAccessToken(data.accessToken)
+      setAccessToken(data.accessToken)
       await setServerCredentials({ data: { accessToken: data.accessToken } })
       router.navigate({ to: '/' })
       router.invalidate()

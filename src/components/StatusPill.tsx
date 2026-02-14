@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { REQUEST_STATUS } from '@/types/company-request'
+import { REQUEST_STATUS } from '@/types/request'
 
 const statusConfig: Record<string, { label: string; className: string }> = {
   [REQUEST_STATUS.UNDER_REVIEW]: {

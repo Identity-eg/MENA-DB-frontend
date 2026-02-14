@@ -66,7 +66,7 @@ type LoginValues = z.infer<typeof loginSchema>
 const LoginForm = () => {
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: 'admin@mena.com', password: 'password123' },
+    defaultValues: { email: 'admin@menabusiness.com', password: 'password123' },
   })
 
   const loginMutation = useLogin()

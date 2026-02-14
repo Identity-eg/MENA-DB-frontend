@@ -1,12 +1,12 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { CreditCard, Download, Eye, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import type { CompanyRequestListItem } from '@/types/company-request'
+import type { TRequest } from '@/types/request'
 import {
   getRequestsQueryOptions,
   useGetRequests,
 } from '@/apis/requests/get-requests'
-import { REQUEST_STATUS } from '@/types/company-request'
+import { REQUEST_STATUS } from '@/types/request'
 import { PageHeader } from '@/components/page-header'
 import { StatusPill } from '@/components/StatusPill'
 import { Button } from '@/components/ui/button'
@@ -51,18 +51,25 @@ function RequestsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all')
 
   const { data } = useGetRequests()
-  const requests: Array<CompanyRequestListItem> = data.data
+  const requests: Array<TRequest> = data.data
 
   const filtered = useMemo(() => {
     return requests.filter((req) => {
       const requestIdStr = formatRequestId(req.id)
       const searchLower = search.toLowerCase()
+      const companyMatch = req.companies.some(
+        (c) =>
+          c.nameEn.toLowerCase().includes(searchLower) ||
+          (c.nameAr != null && c.nameAr.toLowerCase().includes(searchLower)),
+      )
+      const individualMatch = req.individuals.some((i) =>
+        i.fullName.toLowerCase().includes(searchLower),
+      )
       const matchSearch =
         !search ||
         requestIdStr.toLowerCase().includes(searchLower) ||
-        req.company.nameEn.toLowerCase().includes(searchLower) ||
-        (req.company.nameAr != null &&
-          req.company.nameAr.toLowerCase().includes(searchLower))
+        companyMatch ||
+        individualMatch
       const matchStatus = statusFilter === 'all' || req.status === statusFilter
       return matchSearch && matchStatus
     })
@@ -78,7 +85,7 @@ function RequestsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search by request ID or company"
+            placeholder="Search by request ID, company or individual"
             className="pl-9"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -119,11 +126,12 @@ function RequestsPage() {
             </div>
           ) : (
             <div className="w-full max-w-full min-w-0 overflow-x-auto -mx-4 sm:mx-0">
-              <Table className="min-w-[42rem]">
+              <Table className="min-w-2xl">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Request ID</TableHead>
-                    <TableHead>Company</TableHead>
+                    <TableHead>Companies</TableHead>
+                    <TableHead>Individuals</TableHead>
                     <TableHead>Reports</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Price</TableHead>
@@ -138,7 +146,18 @@ function RequestsPage() {
                       </TableCell>
                       <TableCell>
                         <span className="font-medium">
-                          {req.company.nameEn}
+                          {req.companies
+                            .map((c) =>
+                              c.nameAr ? `${c.nameEn} (${c.nameAr})` : c.nameEn,
+                            )
+                            .join(', ') || '—'}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium">
+                          {req.individuals
+                            .map((i) => i.fullName)
+                            .join(', ') || '—'}
                         </span>
                       </TableCell>
                       <TableCell>

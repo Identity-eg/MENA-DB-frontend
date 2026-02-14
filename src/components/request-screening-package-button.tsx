@@ -22,7 +22,11 @@ export function RequestScreeningPackageButton({
   const handleClick = () => {
     if (selectedReportIds.length === 0) return
     createRequest.mutate(
-      { companyId, reportIds: selectedReportIds },
+      {
+        companyReports: [
+          { companyId, reportIds: selectedReportIds },
+        ],
+      },
       {
         onSuccess: () => {
           navigate({ to: '/requests' })
