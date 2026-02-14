@@ -1,0 +1,35 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate, useRouter } from '@tanstack/react-router'
+import { request } from '../request'
+import { setServerCredentials, useSetClientAccessToken } from '@/lib/auth'
+
+const login = async ({
+  email,
+  password,
+}: {
+  email: string
+  password: string
+}) => {
+  return await request<{ accessToken: string; message: string }>({
+    url: '/auth/login',
+    method: 'POST',
+    data: { email, password },
+  })
+}
+
+export const useLogin = () => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const setAccessToken = useSetClientAccessToken()
+  const router = useRouter()
+
+  return useMutation({
+    mutationFn: login,
+    onSuccess: async (data) => {
+      await setAccessToken(data.accessToken)
+      await setServerCredentials({ data: { accessToken: data.accessToken } })
+      router.navigate({ to: '/' })
+      router.invalidate()
+    },
+  })
+}
