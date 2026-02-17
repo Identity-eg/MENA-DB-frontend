@@ -3,7 +3,7 @@ import { ShieldCheck } from 'lucide-react'
 import { Button } from './ui/button'
 import type { TUser } from '@/types/user'
 import { clearServerCredentials } from '@/lib/auth'
-import { QueryClient, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function HomeHeader({ user }: { user?: TUser | null }) {
   const router = useRouter()
@@ -28,24 +28,25 @@ export function HomeHeader({ user }: { user?: TUser | null }) {
           </div>
         </div>
 
-        {user ? (
-          <div>welcome {user.name}</div>
-        ) : (
-          <nav className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="hidden sm:flex">
-              <Link to="/auth/login" data-testid="link-login">
-                Login
-              </Link>
+        <nav className="flex items-center gap-1 sm:gap-2">
+          <Link to="/about-us">
+            <Button variant="ghost" size="sm">
+              About Us
             </Button>
-            <Button size="sm">
-              <Link to="/auth/signup" data-testid="link-signup">
-                Get Started
-              </Link>
+          </Link>
+          <Link to="/solutions">
+            <Button variant="ghost" size="sm">
+              Solutions
             </Button>
-          </nav>
-        )}
+          </Link>
+          <Link to="/dashboard">
+            <Button variant="ghost" size="sm">
+              Dashboard
+            </Button>
+          </Link>
+        </nav>
 
-        {user && (
+        {user ? (
           <Button
             variant="ghost"
             size="sm"
@@ -60,6 +61,19 @@ export function HomeHeader({ user }: { user?: TUser | null }) {
           >
             Logout
           </Button>
+        ) : (
+          <nav className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="hidden sm:flex">
+              <Link to="/auth/login" data-testid="link-login">
+                Login
+              </Link>
+            </Button>
+            <Button size="sm">
+              <Link to="/auth/signup" data-testid="link-signup">
+                Get Started
+              </Link>
+            </Button>
+          </nav>
         )}
       </div>
     </header>

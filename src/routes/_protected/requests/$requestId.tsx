@@ -89,6 +89,8 @@ function formatRequestDate(iso: string) {
 type ReportWithPriceAndUploads = RequestReport & {
   price: number
   upload?: RequestReportUploadItem | null
+  reportStatus?: RequestReportItem['status']
+  finalPrice?: number | null
 }
 
 type SubjectItem = {
@@ -195,6 +197,8 @@ function buildSubjects(request: TRequest): Array<SubjectItem> {
       estimatedPrice: rr.report.estimatedPrice ?? price,
       price,
       upload: rr.upload ?? null,
+      reportStatus: rr.status,
+      finalPrice: rr.finalPrice ?? null,
     }
 
     if (rr.companyId != null && rr.company != null) {
@@ -351,7 +355,7 @@ function RequestDetailsPage() {
   const activeSubject = foundSubject ?? subjects[0]
   const selectedSubject = subjects.length > 0 ? activeSubject : null
   const estimatedPrice = request.estimatedPrice
-  const finalPrice = request.finalPrice
+  const amountDue = request.invoice?.amount ?? estimatedPrice
 
   const currentStepIndex = TIMELINE_STATUSES.indexOf(status)
   const isRejectedOrCancelled =
@@ -438,7 +442,7 @@ function RequestDetailsPage() {
                     ) : (
                       <CreditCard className="h-4 w-4" />
                     )}{' '}
-                    Pay ${finalPrice ?? estimatedPrice}
+                    Pay ${amountDue.toLocaleString()}
                   </Button>
                 </>
               )}
@@ -455,14 +459,14 @@ function RequestDetailsPage() {
                 </p>
               </div>
             </div>
-            {finalPrice != null && (
+            {request.invoice != null && (
               <div className="flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3">
                 <div className="space-y-0.5">
                   <p className="text-[11px] font-semibold text-muted-foreground">
-                    Final amount
+                    Amount due
                   </p>
                   <p className="text-xl font-bold tabular-nums tracking-tight text-primary">
-                    ${finalPrice}
+                    ${request.invoice.amount.toLocaleString()}
                   </p>
                 </div>
               </div>

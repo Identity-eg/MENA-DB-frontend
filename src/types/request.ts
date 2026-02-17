@@ -16,6 +16,17 @@ export const REQUEST_STATUS = {
 
 export type RequestStatusValue = ValueOf<typeof REQUEST_STATUS>
 
+/** Request report (line) status enum values */
+export const REQUEST_REPORT_STATUS = {
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  NEED_CLARIFICATION: 'NEED_CLARIFICATION',
+} as const
+
+export type RequestReportStatusValue = ValueOf<typeof REQUEST_REPORT_STATUS>
+
 /** Minimal company shape in request list/detail */
 export type TRequestCompany = {
   id: number
@@ -117,10 +128,21 @@ export type RequestReportItem = {
   reportId: number
   companyId?: number | null
   individualId?: number | null
+  status?: RequestReportStatusValue
+  finalPrice?: number | null
   company?: TRequestCompany | null
   individual?: TIndividual | null
   report: RequestReport & { price?: number; estimatedPrice?: number }
   upload?: RequestReportUploadItem | null
+}
+
+/** Invoice shape when included on a request */
+export type TRequestInvoice = {
+  id: number
+  requestId: number
+  amount: number
+  status: string
+  invoiceNumber?: string
 }
 
 /** Single request from GET /api/requests and GET /api/requests/:id */
@@ -129,10 +151,11 @@ export type TRequest = {
   userId: number
   status: RequestStatusValue
   estimatedPrice: number
-  finalPrice: number | null
   notes: string | null
   createdAt: string
   updatedAt: string
+  /** Present when request has an invoice (e.g. GET /api/requests/:id) */
+  invoice?: TRequestInvoice | null
   /** Unique companies in this request */
   companies: Array<TCompany | TRequestCompany>
   /** Individuals in this request */

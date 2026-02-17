@@ -39,7 +39,7 @@ function formatUnlockedValue(
 
 function UnlocksPage() {
   const { data } = useGetUnlocks()
-  const unlocks = data.data
+  const unlocks = data?.data ?? []
 
   return (
     <div className="space-y-8">

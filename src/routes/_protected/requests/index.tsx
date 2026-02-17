@@ -41,8 +41,8 @@ function formatRequestId(id: number) {
   return `REQ-${String(id).padStart(6, '0')}`
 }
 
-function formatPrice(estimatedPrice: number, finalPrice: number | null) {
-  const amount = finalPrice ?? estimatedPrice
+function formatPrice(estimatedPrice: number, invoiceAmount?: number | null) {
+  const amount = invoiceAmount ?? estimatedPrice
   return `$${amount}`
 }
 
@@ -147,7 +147,7 @@ function RequestsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all')
 
   const { data } = useGetRequests()
-  const requests: Array<TRequest> = data.data ?? []
+  const requests: Array<TRequest> = data?.data ?? []
 
   const filtered = useMemo(() => {
     return requests.filter((req) => {
@@ -308,7 +308,7 @@ function RequestsPage() {
                           <StatusPill status={req.status} />
                         </TableCell>
                         <TableCell className="text-right font-medium">
-                          {formatPrice(req.estimatedPrice, req.finalPrice)}
+                          {formatPrice(req.estimatedPrice, req.invoice?.amount)}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-1">

@@ -23,14 +23,14 @@ function formatRequestId(id: number) {
   return `REQ-${String(id).padStart(6, '0')}`
 }
 
-function formatPrice(estimatedPrice: number, finalPrice: number | null) {
-  const amount = finalPrice ?? estimatedPrice
+function formatPrice(estimatedPrice: number, invoiceAmount?: number | null) {
+  const amount = invoiceAmount ?? estimatedPrice
   return `$${amount}`
 }
 
 export function DashboardRecentRequests() {
   const { data } = useGetRequests()
-  const allRequests: Array<TRequest> = data.data
+  const allRequests: Array<TRequest> = data?.data ?? []
   const recentRequests = allRequests.slice(0, RECENT_LIMIT)
 
   return (
@@ -76,14 +76,14 @@ export function DashboardRecentRequests() {
                         c.nameAr ? `${c.nameEn} (${c.nameAr})` : c.nameEn,
                       )
                       .join(', ') || '—'}
-                    {req.individuals.length > 0 &&
-                      ` · ${req.individuals.length} individual${req.individuals.length !== 1 ? 's' : ''}`}
+                    {req.individuals?.length > 0 &&
+                      ` · ${req.individuals?.length} individual${req.individuals?.length !== 1 ? 's' : ''}`}
                   </TableCell>
                   <TableCell>
                     <StatusPill status={req.status} />
                   </TableCell>
                   <TableCell className="text-right font-medium">
-                    {formatPrice(req.estimatedPrice, req.finalPrice)}
+                    {formatPrice(req.estimatedPrice, req.invoice?.amount)}
                   </TableCell>
                   <TableCell className="text-right">
                     <Link

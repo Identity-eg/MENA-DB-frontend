@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SolutionsRouteImport } from './routes/solutions'
+import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth/verify-email'
@@ -28,6 +30,16 @@ import { Route as ProtectedCompaniesCompanyIdRouteImport } from './routes/_prote
 import { Route as ProtectedRequestsPaymentFailedRequestIdRouteImport } from './routes/_protected/requests/payment-failed.$requestId'
 import { Route as ProtectedRequestsNewIndividualsRouteImport } from './routes/_protected/requests/new.individuals'
 
+const SolutionsRoute = SolutionsRouteImport.update({
+  id: '/solutions',
+  path: '/solutions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutUsRoute = AboutUsRouteImport.update({
+  id: '/about-us',
+  path: '/about-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
   id: '/_protected',
   getParentRoute: () => rootRouteImport,
@@ -124,6 +136,8 @@ const ProtectedRequestsNewIndividualsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about-us': typeof AboutUsRoute
+  '/solutions': typeof SolutionsRoute
   '/admin/services': typeof AdminServicesRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/pending-verification': typeof AuthPendingVerificationRoute
@@ -143,6 +157,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about-us': typeof AboutUsRoute
+  '/solutions': typeof SolutionsRoute
   '/admin/services': typeof AdminServicesRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/pending-verification': typeof AuthPendingVerificationRoute
@@ -164,6 +180,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteRouteWithChildren
+  '/about-us': typeof AboutUsRoute
+  '/solutions': typeof SolutionsRoute
   '/admin/services': typeof AdminServicesRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/pending-verification': typeof AuthPendingVerificationRoute
@@ -185,6 +203,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about-us'
+    | '/solutions'
     | '/admin/services'
     | '/auth/login'
     | '/auth/pending-verification'
@@ -204,6 +224,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about-us'
+    | '/solutions'
     | '/admin/services'
     | '/auth/login'
     | '/auth/pending-verification'
@@ -224,6 +246,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_protected'
+    | '/about-us'
+    | '/solutions'
     | '/admin/services'
     | '/auth/login'
     | '/auth/pending-verification'
@@ -245,6 +269,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
+  AboutUsRoute: typeof AboutUsRoute
+  SolutionsRoute: typeof SolutionsRoute
   AdminServicesRoute: typeof AdminServicesRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthPendingVerificationRoute: typeof AuthPendingVerificationRoute
@@ -257,6 +283,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/solutions': {
+      id: '/solutions'
+      path: '/solutions'
+      fullPath: '/solutions'
+      preLoaderRoute: typeof SolutionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about-us': {
+      id: '/about-us'
+      path: '/about-us'
+      fullPath: '/about-us'
+      preLoaderRoute: typeof AboutUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_protected': {
       id: '/_protected'
       path: ''
@@ -416,6 +456,8 @@ const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
+  AboutUsRoute: AboutUsRoute,
+  SolutionsRoute: SolutionsRoute,
   AdminServicesRoute: AdminServicesRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthPendingVerificationRoute: AuthPendingVerificationRoute,

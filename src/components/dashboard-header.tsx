@@ -1,14 +1,20 @@
-import { Menu, ShieldCheck } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { MenuIcon, Undo2Icon } from 'lucide-react'
 import { Button } from './ui/button'
 
 export function DashboardHeader() {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur lg:px-8">
-      <div className="flex items-center gap-4 lg:hidden">
-        <Button variant="ghost" size="icon">
-          <Menu className="h-5 w-5" />
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" className="lg:hidden">
+          <MenuIcon className="h-5 w-5" />
         </Button>
-        <ShieldCheck className="h-6 w-6 text-primary" />
+        <Link to="/">
+          <Button variant="ghost" size="sm" className="flex items-center gap-2">
+            <Undo2Icon className="h-6 w-6 text-primary" />
+            <span className="hidden font-medium sm:inline">Back to Home</span>
+          </Button>
+        </Link>
       </div>
       <div className="flex flex-1 items-center justify-end gap-4">
         <div className="flex items-center gap-2">

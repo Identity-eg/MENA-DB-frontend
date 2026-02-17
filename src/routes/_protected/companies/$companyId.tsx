@@ -11,6 +11,7 @@ import {
   MapPin,
   Phone,
   Sparkles,
+  Unlock,
 } from 'lucide-react'
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import {
@@ -143,9 +144,14 @@ function CompanyDetailsContent() {
     { key: 'description', label: 'Description', value: company.description },
   ]
 
-  const unlockedFields = profileFields.filter(({ key }) => {
+  const purchasedUnlockFields = profileFields.filter(({ key }) => {
     const locked = getLockedFieldByFieldName(key)
-    return !locked || locked.unlocks.length > 0
+    return locked != null && locked.unlocks.length > 0
+  })
+
+  const publicFields = profileFields.filter(({ key }) => {
+    const locked = getLockedFieldByFieldName(key)
+    return locked == null
   })
 
   const lockedFields = profileFields.filter(({ key }) => {
@@ -209,34 +215,6 @@ function CompanyDetailsContent() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-primary" /> Company Profile
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {unlockedFields.length > 0 ? (
-                <div className="grid gap-6 sm:grid-cols-2">
-                  {unlockedFields.map(({ key, label, value }) => (
-                    <div key={key} className="space-y-1">
-                      <span className="text-xs font-bold text-muted-foreground mb-2 inline-block">
-                        {label}
-                      </span>
-                      <div className="flex items-center gap-2 min-h-6 text-sm">
-                        {value ?? '—'}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground py-2">
-                  No public details available.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
           {lockedFields.length > 0 && (
             <Card className="relative overflow-hidden rounded-2xl border-0 bg-linear-to-b from-primary/8 via-primary/5 to-transparent shadow-lg ring-1 ring-primary/10 dark:from-primary/15 dark:via-primary/10 dark:to-transparent dark:ring-primary/20">
               {/* Subtle grid pattern */}
@@ -361,6 +339,95 @@ function CompanyDetailsContent() {
               </CardContent>
             </Card>
           )}
+
+          {/* Unlocked (purchased) fields – highlighted */}
+          {purchasedUnlockFields.length > 0 && (
+            <Card className="overflow-hidden rounded-2xl border-emerald-300/60 bg-linear-to-br from-emerald-100/80 to-transparent shadow-sm ring-1 ring-emerald-300 dark:border-emerald-900/40 dark:from-emerald-950/30 dark:to-transparent dark:ring-emerald-800/30">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600 dark:bg-emerald-400/20 dark:text-emerald-400">
+                    <Unlock className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base font-semibold tracking-tight text-emerald-800 dark:text-emerald-200">
+                      Unlocked details
+                    </CardTitle>
+                    <p className="text-xs text-emerald-600/80 dark:text-emerald-400/80 mt-0.5">
+                      Fields you’ve unlocked for this company
+                    </p>
+                  </div>
+                  <Badge className="ml-auto shrink-0 border-emerald-200 bg-emerald-500/10 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300 text-[10px] font-bold uppercase">
+                    {purchasedUnlockFields.length} unlocked
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {purchasedUnlockFields.map(({ key, label, value }) => {
+                    const FieldIcon = getFieldIcon(key)
+                    return (
+                      <div
+                        key={key}
+                        className={cn(
+                          'group flex items-start gap-3 rounded-xl border border-emerald-500/50 bg-white/70 p-4 transition-colors dark:border-emerald-800/40 dark:bg-white/5',
+                          'hover:border-emerald-300/60 hover:bg-white/90 dark:hover:border-emerald-700/50 dark:hover:bg-white/10',
+                        )}
+                      >
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:bg-emerald-400/15 dark:text-emerald-400">
+                          <FieldIcon className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700/90 dark:text-emerald-300/90">
+                              {label}
+                            </span>
+                            <CheckCircle2
+                              className="h-3.5 w-3.5 shrink-0 text-emerald-500 dark:text-emerald-400"
+                              aria-hidden
+                            />
+                          </div>
+                          <p className="text-sm font-medium text-foreground leading-snug">
+                            {value ?? '—'}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-primary" /> Company Profile
+              </CardTitle>
+              <p className="text-sm text-muted-foreground font-normal mt-1">
+                Public information
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {publicFields.length > 0 ? (
+                <div className="grid gap-6 sm:grid-cols-2">
+                  {publicFields.map(({ key, label, value }) => (
+                    <div key={key} className="space-y-1">
+                      <span className="text-xs font-bold text-muted-foreground mb-2 inline-block uppercase tracking-wider">
+                        {label}
+                      </span>
+                      <div className="flex items-center gap-2 min-h-6 text-sm">
+                        {value ?? '—'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground py-2">
+                  No public details available.
+                </p>
+              )}
+            </CardContent>
+          </Card>
 
           <Card className="shadow-soft border-border bg-card">
             <CardHeader>
