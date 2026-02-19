@@ -72,7 +72,7 @@ const LoginForm = () => {
   const loginMutation = useLogin()
 
   const onSubmit = async (data: LoginValues) => {
-    await loginMutation.mutateAsync(data)
+    await loginMutation.mutateAsync({ data })
   }
 
   const isSubmitting = form.formState.isSubmitting
