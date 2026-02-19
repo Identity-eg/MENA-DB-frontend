@@ -34,15 +34,15 @@ export function HeroSection() {
 
       <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
         <Link to="/requests/new/individuals" data-testid="hero-cta-primary">
-          <Button size="lg">
-            Start Individual Screening
+          <Button size="lg" className="w-50">
+            Search Individual
             <ArrowRight />
           </Button>
         </Link>
         <Link to="/companies" data-testid="hero-cta-secondary">
-          <Button variant="outline" size="lg">
+          <Button variant="outline" size="lg" className="w-50">
             <Search />
-            Explore Company Database
+            Explore Company
           </Button>
         </Link>
       </div>

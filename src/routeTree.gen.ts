@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth/verify-email'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as AuthSetupPasswordRouteImport } from './routes/auth/setup-password'
+import { Route as AuthResetRouteImport } from './routes/auth/reset'
 import { Route as AuthPendingVerificationRouteImport } from './routes/auth/pending-verification'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
@@ -62,6 +63,11 @@ const AuthSignupRoute = AuthSignupRouteImport.update({
 const AuthSetupPasswordRoute = AuthSetupPasswordRouteImport.update({
   id: '/auth/setup-password',
   path: '/auth/setup-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthResetRoute = AuthResetRouteImport.update({
+  id: '/auth/reset',
+  path: '/auth/reset',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthPendingVerificationRoute = AuthPendingVerificationRouteImport.update({
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/admin/services': typeof AdminServicesRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/pending-verification': typeof AuthPendingVerificationRoute
+  '/auth/reset': typeof AuthResetRoute
   '/auth/setup-password': typeof AuthSetupPasswordRoute
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/admin/services': typeof AdminServicesRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/pending-verification': typeof AuthPendingVerificationRoute
+  '/auth/reset': typeof AuthResetRoute
   '/auth/setup-password': typeof AuthSetupPasswordRoute
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/admin/services': typeof AdminServicesRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/pending-verification': typeof AuthPendingVerificationRoute
+  '/auth/reset': typeof AuthResetRoute
   '/auth/setup-password': typeof AuthSetupPasswordRoute
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/admin/services'
     | '/auth/login'
     | '/auth/pending-verification'
+    | '/auth/reset'
     | '/auth/setup-password'
     | '/auth/signup'
     | '/auth/verify-email'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/admin/services'
     | '/auth/login'
     | '/auth/pending-verification'
+    | '/auth/reset'
     | '/auth/setup-password'
     | '/auth/signup'
     | '/auth/verify-email'
@@ -251,6 +262,7 @@ export interface FileRouteTypes {
     | '/admin/services'
     | '/auth/login'
     | '/auth/pending-verification'
+    | '/auth/reset'
     | '/auth/setup-password'
     | '/auth/signup'
     | '/auth/verify-email'
@@ -274,6 +286,7 @@ export interface RootRouteChildren {
   AdminServicesRoute: typeof AdminServicesRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthPendingVerificationRoute: typeof AuthPendingVerificationRoute
+  AuthResetRoute: typeof AuthResetRoute
   AuthSetupPasswordRoute: typeof AuthSetupPasswordRoute
   AuthSignupRoute: typeof AuthSignupRoute
   AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
@@ -330,6 +343,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/setup-password'
       fullPath: '/auth/setup-password'
       preLoaderRoute: typeof AuthSetupPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset': {
+      id: '/auth/reset'
+      path: '/auth/reset'
+      fullPath: '/auth/reset'
+      preLoaderRoute: typeof AuthResetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/pending-verification': {
@@ -461,6 +481,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminServicesRoute: AdminServicesRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthPendingVerificationRoute: AuthPendingVerificationRoute,
+  AuthResetRoute: AuthResetRoute,
   AuthSetupPasswordRoute: AuthSetupPasswordRoute,
   AuthSignupRoute: AuthSignupRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,

@@ -70,6 +70,7 @@ const LoginForm = () => {
   })
 
   const loginMutation = useLogin()
+console.log(loginMutation);
 
   const onSubmit = async (data: LoginValues) => {
     await loginMutation.mutateAsync(data)
