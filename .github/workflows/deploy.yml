@@ -1,0 +1,105 @@
+##############################################################################
+# .github/workflows/deploy.yml  (lives in the mena-frontend repo root)
+#
+# On every push to `main`:
+#   1. Build the frontend Docker image (baking VITE_API_URL into the bundle)
+#   2. Push it to Amazon ECR
+#   3. SSH into EC2 → pull the new image → restart only the frontend container
+#
+# Required GitHub Secrets (set in this repo's Settings → Secrets):
+#   AWS_ACCESS_KEY_ID        IAM user key
+#   AWS_SECRET_ACCESS_KEY    IAM user secret
+#   AWS_REGION               e.g. us-east-1
+#   ECR_REGISTRY             e.g. 123456789.dkr.ecr.us-east-1.amazonaws.com
+#   ECR_REPO                 e.g. mena-frontend
+#   VITE_API_URL             Backend API base URL baked into the JS bundle
+#                            e.g. https://api.your-domain.com  or  http://<EC2-IP>
+#   EC2_HOST                 Public IP or DNS of the EC2 instance
+#   EC2_USERNAME             SSH user (ubuntu / ec2-user)
+#   EC2_SSH_KEY              Full contents of the PEM private key
+##############################################################################
+
+name: Build & Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AWS_REGION:   ${{ secrets.AWS_REGION }}
+  ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+  ECR_REPO:     ${{ secrets.ECR_REPO }}
+
+jobs:
+  build-and-deploy:
+    name: Build, Push & Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
+            -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPO:latest \
+            .
+
+      - name: Push image to ECR
+        run: |
+          docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPO:latest
+
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/ec2-key.pem
+          chmod 600 /tmp/ec2-key.pem
+
+      - name: Deploy to EC2
+        env:
+          EC2_HOST:     ${{ secrets.EC2_HOST }}
+          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+        run: |
+          ssh -i /tmp/ec2-key.pem \
+              -o StrictHostKeyChecking=no \
+              $EC2_USERNAME@$EC2_HOST \
+              "
+                set -e
+
+                aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
+                  docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
+
+                cd ~/mena-infra
+
+                export ECR_REGISTRY=${{ env.ECR_REGISTRY }}
+                export FRONTEND_TAG=$IMAGE_TAG
+
+                docker compose pull frontend
+                docker compose up -d --no-build --no-deps frontend
+
+                docker image prune -f
+
+                echo '✔ Frontend deployed: $IMAGE_TAG'
+              "
+
+      - name: Clean up SSH key
+        if: always()
+        run: rm -f /tmp/ec2-key.pem
