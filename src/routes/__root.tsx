@@ -19,6 +19,7 @@ import type { TUser } from '@/types/user'
 import { getMeQueryOptions } from '@/apis/user/get-me'
 import { useAuthStore } from '@/stores/auth'
 import { getIsomorphicAccessToken } from '@/apis/request/request-interceptor'
+import { NotFoundPage } from '@/components/layout/not-found-page'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -38,7 +39,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     const user = await context.queryClient.ensureQueryData(getMeQueryOptions())
     return { user }
   },
-  notFoundComponent: () => <div>Not found Page</div>,
+  notFoundComponent: NotFoundPage,
   head: () => ({
     meta: [
       {

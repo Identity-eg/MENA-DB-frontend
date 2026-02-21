@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
   ChevronLeft,
@@ -15,11 +15,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { servicesCatalog } from '@/data/services'
-import type { Subject, Service } from '@/types'
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/_protected/requests/new/individuals')({
+export const Route = createFileRoute('/_protected/requests/new/individual')({
   component: NewRequestIndividualsPage,
 })
 
@@ -31,7 +29,7 @@ function generateId() {
 
 function NewRequestIndividualsPage() {
   const [step, setStep] = useState(1)
-  const [subjects, setSubjects] = useState<Subject[]>([
+  const [subjects, setSubjects] = useState<any[]>([
     {
       id: '1',
       type: 'Individual',
@@ -47,28 +45,6 @@ function NewRequestIndividualsPage() {
     idNumber: '',
     email: '',
   })
-  const [selectedServiceIds, setSelectedServiceIds] = useState<Set<string>>(
-    new Set(['risk-intel']),
-  )
-  const [legalAccepted, setLegalAccepted] = useState(false)
-
-  const toggleService = (id: string) => {
-    setSelectedServiceIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
-
-  const selectedServices = servicesCatalog.filter((s) =>
-    selectedServiceIds.has(s.id),
-  )
-  const estimatedTotal = selectedServices.reduce(
-    (sum, s) => sum + s.estimatedPriceUsd,
-    0,
-  )
-  const maxTat = Math.max(...selectedServices.map((s) => s.estimatedTatDays), 0)
 
   const handleAddIndividual = () => {
     if (!addIndividualForm.fullName.trim()) return
@@ -93,7 +69,7 @@ function NewRequestIndividualsPage() {
   }
 
   return (
-    <DashboardLayout variant="customer">
+    <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">
           New individual request
@@ -248,20 +224,7 @@ function NewRequestIndividualsPage() {
               per service.
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
-              {servicesCatalog
-                .filter(
-                  (s) =>
-                    s.allowedType === 'Individual' || s.allowedType === 'Both',
-                )
-                .map((service) => (
-                  <ServiceCard
-                    key={service.id}
-                    service={service}
-                    selected={selectedServiceIds.has(service.id)}
-                    onToggle={toggleService}
-                    showCheckbox
-                  />
-                ))}
+              
             </div>
           </div>
           <Card className="h-fit rounded-xl border border-border shadow-sm lg:sticky lg:top-24">
@@ -278,15 +241,15 @@ function NewRequestIndividualsPage() {
                 </div>
                 <div className="flex justify-between text-muted-foreground">
                   <span>Services</span>
-                  <span>{selectedServices.length}</span>
+                  <span></span>
                 </div>
                 <div className="flex justify-between font-medium text-foreground">
                   <span>Estimated total</span>
-                  <span>${estimatedTotal}</span>
+                  <span>0</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
                   <span>Est. TAT</span>
-                  <span>{maxTat} days</span>
+                  <span>0 days</span>
                 </div>
               </div>
             </CardContent>
@@ -312,17 +275,10 @@ function NewRequestIndividualsPage() {
             </CardHeader>
             <CardContent className="pt-4">
               <ul className="space-y-2 text-sm text-muted-foreground">
-                {selectedServices.map((s) => (
-                  <li key={s.id} className="flex justify-between">
-                    <span>{s.name}</span>
-                    <span>
-                      ${s.estimatedPriceUsd} · {s.estimatedTatDays} days
-                    </span>
-                  </li>
-                ))}
+                
                 <li className="flex justify-between border-t border-border pt-2 font-medium text-foreground">
                   <span>Total</span>
-                  <span>${estimatedTotal}</span>
+                  <span>$0</span>
                 </li>
               </ul>
             </CardContent>
@@ -331,8 +287,7 @@ function NewRequestIndividualsPage() {
             <label className="flex items-start gap-3">
               <input
                 type="checkbox"
-                checked={legalAccepted}
-                onChange={(e) => setLegalAccepted(e.target.checked)}
+                
                 className="mt-1 rounded border-input"
               />
               <span className="text-sm text-muted-foreground">
@@ -367,7 +322,7 @@ function NewRequestIndividualsPage() {
             <ChevronRight className="h-4 w-4" />
           </Button>
         ) : (
-          <Button disabled={!legalAccepted}>Submit request</Button>
+          <Button>Submit request</Button>
         )}
       </div>
     </DashboardLayout>

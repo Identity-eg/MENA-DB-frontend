@@ -19,17 +19,16 @@ import { Route as AuthSetupPasswordRouteImport } from './routes/auth/setup-passw
 import { Route as AuthResetRouteImport } from './routes/auth/reset'
 import { Route as AuthPendingVerificationRouteImport } from './routes/auth/pending-verification'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
-import { Route as AdminServicesRouteImport } from './routes/admin.services'
-import { Route as AdminRequestsIndexRouteImport } from './routes/admin.requests.index'
 import { Route as ProtectedUnlocksIndexRouteImport } from './routes/_protected/unlocks/index'
 import { Route as ProtectedRequestsIndexRouteImport } from './routes/_protected/requests/index'
+import { Route as ProtectedIndividualsIndexRouteImport } from './routes/_protected/individuals/index'
 import { Route as ProtectedDashboardIndexRouteImport } from './routes/_protected/dashboard/index'
 import { Route as ProtectedCompaniesIndexRouteImport } from './routes/_protected/companies/index'
-import { Route as AdminRequestsRequestIdRouteImport } from './routes/admin.requests.$requestId'
 import { Route as ProtectedRequestsRequestIdRouteImport } from './routes/_protected/requests/$requestId'
 import { Route as ProtectedCompaniesCompanyIdRouteImport } from './routes/_protected/companies/$companyId'
 import { Route as ProtectedRequestsPaymentFailedRequestIdRouteImport } from './routes/_protected/requests/payment-failed.$requestId'
-import { Route as ProtectedRequestsNewIndividualsRouteImport } from './routes/_protected/requests/new.individuals'
+import { Route as ProtectedRequestsNewIndividualRouteImport } from './routes/_protected/requests/new.individual'
+import { Route as ProtectedRequestsNewCompanyRouteImport } from './routes/_protected/requests/new.company'
 
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
@@ -80,16 +79,6 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminServicesRoute = AdminServicesRouteImport.update({
-  id: '/admin/services',
-  path: '/admin/services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRequestsIndexRoute = AdminRequestsIndexRouteImport.update({
-  id: '/admin/requests/',
-  path: '/admin/requests/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProtectedUnlocksIndexRoute = ProtectedUnlocksIndexRouteImport.update({
   id: '/unlocks/',
   path: '/unlocks/',
@@ -100,6 +89,12 @@ const ProtectedRequestsIndexRoute = ProtectedRequestsIndexRouteImport.update({
   path: '/requests/',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
+const ProtectedIndividualsIndexRoute =
+  ProtectedIndividualsIndexRouteImport.update({
+    id: '/individuals/',
+    path: '/individuals/',
+    getParentRoute: () => ProtectedRouteRoute,
+  } as any)
 const ProtectedDashboardIndexRoute = ProtectedDashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
@@ -109,11 +104,6 @@ const ProtectedCompaniesIndexRoute = ProtectedCompaniesIndexRouteImport.update({
   id: '/companies/',
   path: '/companies/',
   getParentRoute: () => ProtectedRouteRoute,
-} as any)
-const AdminRequestsRequestIdRoute = AdminRequestsRequestIdRouteImport.update({
-  id: '/admin/requests/$requestId',
-  path: '/admin/requests/$requestId',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const ProtectedRequestsRequestIdRoute =
   ProtectedRequestsRequestIdRouteImport.update({
@@ -133,10 +123,16 @@ const ProtectedRequestsPaymentFailedRequestIdRoute =
     path: '/requests/payment-failed/$requestId',
     getParentRoute: () => ProtectedRouteRoute,
   } as any)
-const ProtectedRequestsNewIndividualsRoute =
-  ProtectedRequestsNewIndividualsRouteImport.update({
-    id: '/requests/new/individuals',
-    path: '/requests/new/individuals',
+const ProtectedRequestsNewIndividualRoute =
+  ProtectedRequestsNewIndividualRouteImport.update({
+    id: '/requests/new/individual',
+    path: '/requests/new/individual',
+    getParentRoute: () => ProtectedRouteRoute,
+  } as any)
+const ProtectedRequestsNewCompanyRoute =
+  ProtectedRequestsNewCompanyRouteImport.update({
+    id: '/requests/new/company',
+    path: '/requests/new/company',
     getParentRoute: () => ProtectedRouteRoute,
   } as any)
 
@@ -144,7 +140,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about-us': typeof AboutUsRoute
   '/solutions': typeof SolutionsRoute
-  '/admin/services': typeof AdminServicesRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/pending-verification': typeof AuthPendingVerificationRoute
   '/auth/reset': typeof AuthResetRoute
@@ -153,20 +148,19 @@ export interface FileRoutesByFullPath {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/companies/$companyId': typeof ProtectedCompaniesCompanyIdRoute
   '/requests/$requestId': typeof ProtectedRequestsRequestIdRoute
-  '/admin/requests/$requestId': typeof AdminRequestsRequestIdRoute
   '/companies/': typeof ProtectedCompaniesIndexRoute
   '/dashboard/': typeof ProtectedDashboardIndexRoute
+  '/individuals/': typeof ProtectedIndividualsIndexRoute
   '/requests/': typeof ProtectedRequestsIndexRoute
   '/unlocks/': typeof ProtectedUnlocksIndexRoute
-  '/admin/requests/': typeof AdminRequestsIndexRoute
-  '/requests/new/individuals': typeof ProtectedRequestsNewIndividualsRoute
+  '/requests/new/company': typeof ProtectedRequestsNewCompanyRoute
+  '/requests/new/individual': typeof ProtectedRequestsNewIndividualRoute
   '/requests/payment-failed/$requestId': typeof ProtectedRequestsPaymentFailedRequestIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about-us': typeof AboutUsRoute
   '/solutions': typeof SolutionsRoute
-  '/admin/services': typeof AdminServicesRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/pending-verification': typeof AuthPendingVerificationRoute
   '/auth/reset': typeof AuthResetRoute
@@ -175,13 +169,13 @@ export interface FileRoutesByTo {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/companies/$companyId': typeof ProtectedCompaniesCompanyIdRoute
   '/requests/$requestId': typeof ProtectedRequestsRequestIdRoute
-  '/admin/requests/$requestId': typeof AdminRequestsRequestIdRoute
   '/companies': typeof ProtectedCompaniesIndexRoute
   '/dashboard': typeof ProtectedDashboardIndexRoute
+  '/individuals': typeof ProtectedIndividualsIndexRoute
   '/requests': typeof ProtectedRequestsIndexRoute
   '/unlocks': typeof ProtectedUnlocksIndexRoute
-  '/admin/requests': typeof AdminRequestsIndexRoute
-  '/requests/new/individuals': typeof ProtectedRequestsNewIndividualsRoute
+  '/requests/new/company': typeof ProtectedRequestsNewCompanyRoute
+  '/requests/new/individual': typeof ProtectedRequestsNewIndividualRoute
   '/requests/payment-failed/$requestId': typeof ProtectedRequestsPaymentFailedRequestIdRoute
 }
 export interface FileRoutesById {
@@ -190,7 +184,6 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteRouteWithChildren
   '/about-us': typeof AboutUsRoute
   '/solutions': typeof SolutionsRoute
-  '/admin/services': typeof AdminServicesRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/pending-verification': typeof AuthPendingVerificationRoute
   '/auth/reset': typeof AuthResetRoute
@@ -199,13 +192,13 @@ export interface FileRoutesById {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/_protected/companies/$companyId': typeof ProtectedCompaniesCompanyIdRoute
   '/_protected/requests/$requestId': typeof ProtectedRequestsRequestIdRoute
-  '/admin/requests/$requestId': typeof AdminRequestsRequestIdRoute
   '/_protected/companies/': typeof ProtectedCompaniesIndexRoute
   '/_protected/dashboard/': typeof ProtectedDashboardIndexRoute
+  '/_protected/individuals/': typeof ProtectedIndividualsIndexRoute
   '/_protected/requests/': typeof ProtectedRequestsIndexRoute
   '/_protected/unlocks/': typeof ProtectedUnlocksIndexRoute
-  '/admin/requests/': typeof AdminRequestsIndexRoute
-  '/_protected/requests/new/individuals': typeof ProtectedRequestsNewIndividualsRoute
+  '/_protected/requests/new/company': typeof ProtectedRequestsNewCompanyRoute
+  '/_protected/requests/new/individual': typeof ProtectedRequestsNewIndividualRoute
   '/_protected/requests/payment-failed/$requestId': typeof ProtectedRequestsPaymentFailedRequestIdRoute
 }
 export interface FileRouteTypes {
@@ -214,7 +207,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about-us'
     | '/solutions'
-    | '/admin/services'
     | '/auth/login'
     | '/auth/pending-verification'
     | '/auth/reset'
@@ -223,20 +215,19 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/companies/$companyId'
     | '/requests/$requestId'
-    | '/admin/requests/$requestId'
     | '/companies/'
     | '/dashboard/'
+    | '/individuals/'
     | '/requests/'
     | '/unlocks/'
-    | '/admin/requests/'
-    | '/requests/new/individuals'
+    | '/requests/new/company'
+    | '/requests/new/individual'
     | '/requests/payment-failed/$requestId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about-us'
     | '/solutions'
-    | '/admin/services'
     | '/auth/login'
     | '/auth/pending-verification'
     | '/auth/reset'
@@ -245,13 +236,13 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/companies/$companyId'
     | '/requests/$requestId'
-    | '/admin/requests/$requestId'
     | '/companies'
     | '/dashboard'
+    | '/individuals'
     | '/requests'
     | '/unlocks'
-    | '/admin/requests'
-    | '/requests/new/individuals'
+    | '/requests/new/company'
+    | '/requests/new/individual'
     | '/requests/payment-failed/$requestId'
   id:
     | '__root__'
@@ -259,7 +250,6 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/about-us'
     | '/solutions'
-    | '/admin/services'
     | '/auth/login'
     | '/auth/pending-verification'
     | '/auth/reset'
@@ -268,13 +258,13 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/_protected/companies/$companyId'
     | '/_protected/requests/$requestId'
-    | '/admin/requests/$requestId'
     | '/_protected/companies/'
     | '/_protected/dashboard/'
+    | '/_protected/individuals/'
     | '/_protected/requests/'
     | '/_protected/unlocks/'
-    | '/admin/requests/'
-    | '/_protected/requests/new/individuals'
+    | '/_protected/requests/new/company'
+    | '/_protected/requests/new/individual'
     | '/_protected/requests/payment-failed/$requestId'
   fileRoutesById: FileRoutesById
 }
@@ -283,15 +273,12 @@ export interface RootRouteChildren {
   ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
   AboutUsRoute: typeof AboutUsRoute
   SolutionsRoute: typeof SolutionsRoute
-  AdminServicesRoute: typeof AdminServicesRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthPendingVerificationRoute: typeof AuthPendingVerificationRoute
   AuthResetRoute: typeof AuthResetRoute
   AuthSetupPasswordRoute: typeof AuthSetupPasswordRoute
   AuthSignupRoute: typeof AuthSignupRoute
   AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
-  AdminRequestsRequestIdRoute: typeof AdminRequestsRequestIdRoute
-  AdminRequestsIndexRoute: typeof AdminRequestsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -366,20 +353,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/services': {
-      id: '/admin/services'
-      path: '/admin/services'
-      fullPath: '/admin/services'
-      preLoaderRoute: typeof AdminServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/requests/': {
-      id: '/admin/requests/'
-      path: '/admin/requests'
-      fullPath: '/admin/requests/'
-      preLoaderRoute: typeof AdminRequestsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_protected/unlocks/': {
       id: '/_protected/unlocks/'
       path: '/unlocks'
@@ -392,6 +365,13 @@ declare module '@tanstack/react-router' {
       path: '/requests'
       fullPath: '/requests/'
       preLoaderRoute: typeof ProtectedRequestsIndexRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/individuals/': {
+      id: '/_protected/individuals/'
+      path: '/individuals'
+      fullPath: '/individuals/'
+      preLoaderRoute: typeof ProtectedIndividualsIndexRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
     '/_protected/dashboard/': {
@@ -407,13 +387,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/companies/'
       preLoaderRoute: typeof ProtectedCompaniesIndexRouteImport
       parentRoute: typeof ProtectedRouteRoute
-    }
-    '/admin/requests/$requestId': {
-      id: '/admin/requests/$requestId'
-      path: '/admin/requests/$requestId'
-      fullPath: '/admin/requests/$requestId'
-      preLoaderRoute: typeof AdminRequestsRequestIdRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_protected/requests/$requestId': {
       id: '/_protected/requests/$requestId'
@@ -436,11 +409,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedRequestsPaymentFailedRequestIdRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
-    '/_protected/requests/new/individuals': {
-      id: '/_protected/requests/new/individuals'
-      path: '/requests/new/individuals'
-      fullPath: '/requests/new/individuals'
-      preLoaderRoute: typeof ProtectedRequestsNewIndividualsRouteImport
+    '/_protected/requests/new/individual': {
+      id: '/_protected/requests/new/individual'
+      path: '/requests/new/individual'
+      fullPath: '/requests/new/individual'
+      preLoaderRoute: typeof ProtectedRequestsNewIndividualRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/requests/new/company': {
+      id: '/_protected/requests/new/company'
+      path: '/requests/new/company'
+      fullPath: '/requests/new/company'
+      preLoaderRoute: typeof ProtectedRequestsNewCompanyRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
   }
@@ -451,9 +431,11 @@ interface ProtectedRouteRouteChildren {
   ProtectedRequestsRequestIdRoute: typeof ProtectedRequestsRequestIdRoute
   ProtectedCompaniesIndexRoute: typeof ProtectedCompaniesIndexRoute
   ProtectedDashboardIndexRoute: typeof ProtectedDashboardIndexRoute
+  ProtectedIndividualsIndexRoute: typeof ProtectedIndividualsIndexRoute
   ProtectedRequestsIndexRoute: typeof ProtectedRequestsIndexRoute
   ProtectedUnlocksIndexRoute: typeof ProtectedUnlocksIndexRoute
-  ProtectedRequestsNewIndividualsRoute: typeof ProtectedRequestsNewIndividualsRoute
+  ProtectedRequestsNewCompanyRoute: typeof ProtectedRequestsNewCompanyRoute
+  ProtectedRequestsNewIndividualRoute: typeof ProtectedRequestsNewIndividualRoute
   ProtectedRequestsPaymentFailedRequestIdRoute: typeof ProtectedRequestsPaymentFailedRequestIdRoute
 }
 
@@ -462,9 +444,11 @@ const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedRequestsRequestIdRoute: ProtectedRequestsRequestIdRoute,
   ProtectedCompaniesIndexRoute: ProtectedCompaniesIndexRoute,
   ProtectedDashboardIndexRoute: ProtectedDashboardIndexRoute,
+  ProtectedIndividualsIndexRoute: ProtectedIndividualsIndexRoute,
   ProtectedRequestsIndexRoute: ProtectedRequestsIndexRoute,
   ProtectedUnlocksIndexRoute: ProtectedUnlocksIndexRoute,
-  ProtectedRequestsNewIndividualsRoute: ProtectedRequestsNewIndividualsRoute,
+  ProtectedRequestsNewCompanyRoute: ProtectedRequestsNewCompanyRoute,
+  ProtectedRequestsNewIndividualRoute: ProtectedRequestsNewIndividualRoute,
   ProtectedRequestsPaymentFailedRequestIdRoute:
     ProtectedRequestsPaymentFailedRequestIdRoute,
 }
@@ -478,15 +462,12 @@ const rootRouteChildren: RootRouteChildren = {
   ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
   AboutUsRoute: AboutUsRoute,
   SolutionsRoute: SolutionsRoute,
-  AdminServicesRoute: AdminServicesRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthPendingVerificationRoute: AuthPendingVerificationRoute,
   AuthResetRoute: AuthResetRoute,
   AuthSetupPasswordRoute: AuthSetupPasswordRoute,
   AuthSignupRoute: AuthSignupRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
-  AdminRequestsRequestIdRoute: AdminRequestsRequestIdRoute,
-  AdminRequestsIndexRoute: AdminRequestsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,7 +1,16 @@
 import { Link, useRouter } from '@tanstack/react-router'
-import { ShieldCheck } from 'lucide-react'
+import { LogOut, ShieldCheck, User } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from './ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu'
 import type { TUser } from '@/types/user'
 import { clearServerCredentials } from '@/lib/auth'
 import { useAuthStore } from '@/stores/auth'
@@ -32,6 +41,11 @@ export function HomeHeader({ user }: { user?: TUser | null }) {
         </div>
 
         <nav className="flex items-center gap-1 sm:gap-2">
+          <Link to="/">
+            <Button variant="ghost" size="sm">
+              Home
+            </Button>
+          </Link>
           <Link to="/about-us">
             <Button variant="ghost" size="sm">
               About Us
@@ -42,26 +56,55 @@ export function HomeHeader({ user }: { user?: TUser | null }) {
               Solutions
             </Button>
           </Link>
-          <Link to="/dashboard">
-            <Button variant="ghost" size="sm">
-              Dashboard
-            </Button>
-          </Link>
         </nav>
 
         {user ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={async () => {
-              await clearServerCredentials()
-              clearAccessToken()
-              queryClient.removeQueries({ queryKey: ['me'] })
-              router.invalidate()
-            }}
-          >
-            Logout
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground cursor-pointer ring-offset-background transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              {user.name
+                .split(' ')
+                .map((w) => w[0])
+                .join('')
+                .slice(0, 2)
+                .toUpperCase()}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <Link to="/dashboard">
+                  <DropdownMenuItem className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </DropdownMenuItem>
+                </Link>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                  onClick={async () => {
+                    await clearServerCredentials()
+                    clearAccessToken()
+                    queryClient.removeQueries({ queryKey: ['me'] })
+                    router.invalidate()
+                  }}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <nav className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="hidden sm:flex">

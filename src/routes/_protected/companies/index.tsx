@@ -119,7 +119,7 @@ function CompanySearchResults({ q }: { q: string }) {
                 manually request a screening for this entity.
               </p>
             </div>
-            <Link to="/requests/new/individuals">
+            <Link to="/requests/new/company">
               <Button className="gap-2 px-6">
                 <Plus className="h-4 w-4" /> Request Company
               </Button>

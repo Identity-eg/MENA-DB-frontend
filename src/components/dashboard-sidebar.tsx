@@ -5,6 +5,7 @@ import {
   LogOut,
   ShieldCheck,
   Unlock,
+  Users,
 } from 'lucide-react'
 
 import { Link } from '@tanstack/react-router'
@@ -12,9 +13,10 @@ import { Button } from './ui/button'
 
 const items = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Requests', href: '/requests', icon: FileText },
+  { label: 'My Requests', href: '/requests', icon: FileText },
   { label: 'Companies', href: '/companies', icon: Building2 },
-  { label: 'Unlocks', href: '/unlocks', icon: Unlock },
+  { label: 'Individuals', href: '/individuals', icon: Users },
+  { label: 'My Unlocks', href: '/unlocks', icon: Unlock },
 ]
 
 export function DashboardSidebar() {
