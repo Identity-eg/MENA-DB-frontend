@@ -5,8 +5,5 @@
  * @see https://tanstack.com/start/latest/docs/framework/react/guide/environment-variables
  */
 export function getApiBaseUrl(): string {
-  if (typeof window !== 'undefined') {
-    return import.meta.env.VITE_API_URL ?? ''
-  }
-  return process.env.API_SERVER_URL ?? 'http://backend:5000/api'
+  return import.meta.env.VITE_API_URL ?? ''
 }
