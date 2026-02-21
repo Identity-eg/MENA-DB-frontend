@@ -75,7 +75,7 @@ jobs:
 
       - name: Set up SSH key
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/ec2-key.pem
+          echo "${{ secrets.EC2_SSH_KEY }}" | tr -d '\r' > /tmp/ec2-key.pem
           chmod 600 /tmp/ec2-key.pem
 
       - name: Deploy to EC2
@@ -92,7 +92,7 @@ jobs:
                 aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
                   docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
 
-                cd ~/mena-infra
+                cd ~/mena
 
                 export ECR_REGISTRY=${{ env.ECR_REGISTRY }}
                 export FRONTEND_TAG=$IMAGE_TAG
