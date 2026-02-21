@@ -87,9 +87,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <NuqsAdapter>
-          {children}
-        </NuqsAdapter>
+        <NuqsAdapter>{children}</NuqsAdapter>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
