@@ -28,9 +28,9 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION:   ${{ secrets.AWS_REGION }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
   ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-  ECR_REPO:     ${{ secrets.ECR_REPO }}
+  ECR_REPO: ${{ secrets.ECR_REPO }}
 
 jobs:
   build-and-deploy:
@@ -45,20 +45,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region:            ${{ env.AWS_REGION }}
-
-      # ECR registry must be plain hostname only (no https://, no path, no trailing slash)
-      - name: Set ECR registry URL
-        run: |
-          REGISTRY="${{ secrets.ECR_REGISTRY }}"
-          REGISTRY="${REGISTRY#https://}"
-          REGISTRY="${REGISTRY#http://}"
-          REGISTRY="${REGISTRY%%/*}"
-          REGISTRY="${REGISTRY%/}"
-          echo "ECR_REGISTRY=$REGISTRY" >> $GITHUB_ENV
-          echo "Using registry: $REGISTRY"
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
@@ -91,7 +80,7 @@ jobs:
 
       - name: Deploy to EC2
         env:
-          EC2_HOST:     ${{ secrets.EC2_HOST }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
         run: |
           ssh -i /tmp/ec2-key.pem \
