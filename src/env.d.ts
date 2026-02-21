@@ -21,6 +21,8 @@ declare global {
       readonly NODE_ENV: 'development' | 'production' | 'test'
       /** Backend API base URL for SSR/server-only calls (e.g. http://backend:5000/api). */
       readonly API_SERVER_URL?: string
+      /** Set to 'true' only when the site is served over HTTPS; otherwise auth cookies are not stored/sent. */
+      readonly COOKIE_SECURE?: string
     }
   }
 }

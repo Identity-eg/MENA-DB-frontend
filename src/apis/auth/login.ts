@@ -1,22 +1,11 @@
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
-import { request } from '../request'
-import z from 'zod'
 import { createServerFn } from '@tanstack/react-start'
 import { setCookie } from '@tanstack/react-start/server'
+import z from 'zod'
 import { useAuthStore } from '@/stores/auth'
-
-const cookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: (process.env.NODE_ENV === 'production' ? 'strict' : 'lax') as
-    | 'strict'
-    | 'lax'
-    | 'none',
-  maxAge: 1000,
-  expires: new Date(Date.now()),
-  path: '/',
-}
+import { getAuthCookieOptions } from '@/lib/cookie-options'
+import { request } from '../request'
 
 const login = async ({
   email,
@@ -47,6 +36,7 @@ const loginServerAction = createServerFn()
     const { email, password } = data
     const response = await login({ email, password })
 
+    const cookieOptions = getAuthCookieOptions({ maxAge: 60 * 60 * 24 * 7 }) // 7 days
     setCookie('accessToken', response.accessToken, cookieOptions)
     setCookie('refreshToken', response.refreshToken, cookieOptions)
 
@@ -59,7 +49,7 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: loginServerAction,
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
       setAccessToken(data.accessToken)
       router.navigate({ to: '/' })
       router.invalidate()

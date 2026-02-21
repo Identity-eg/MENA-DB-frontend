@@ -2,6 +2,7 @@ import { getCookie, setCookie } from '@tanstack/react-start/server'
 import { createIsomorphicFn } from '@tanstack/react-start'
 import type { InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/stores/auth'
+import { getAuthCookieOptions } from '@/lib/cookie-options'
 
 export const requestSuccessInterceptor = (
   config: InternalAxiosRequestConfig,
@@ -25,13 +26,11 @@ export const getIsomorphicAccessToken = createIsomorphicFn()
 
 export const setIsomorphicAccessToken = createIsomorphicFn()
   .server((data) => {
-    setCookie('accessToken', data.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-      maxAge: 0.1 * 60 * 1000,
-      path: '/',
-    })
+    setCookie(
+      'accessToken',
+      data.accessToken,
+      getAuthCookieOptions({ maxAge: 0.1 * 60 * 1000 }),
+    )
   })
   .client((data) => {
     useAuthStore.getState().setAccessToken(data.accessToken)
