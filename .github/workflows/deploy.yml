@@ -97,7 +97,7 @@ jobs:
                 docker compose pull frontend
                 docker compose up -d --no-build --no-deps frontend
 
-                docker image prune -f
+                docker image prune -a -f
 
                 echo '✔ Frontend deployed: $IMAGE_TAG'
               "
