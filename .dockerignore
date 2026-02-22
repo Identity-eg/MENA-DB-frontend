@@ -2,9 +2,10 @@ node_modules
 .output
 .vinxi
 dist
-.env
 .env.*
-!.env-example
+!.env
+!.env.example
+!.env.production
 npm-debug.log*
 .DS_Store
 *.log

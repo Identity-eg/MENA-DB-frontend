@@ -13,6 +13,7 @@ import {
   Unlock,
 } from 'lucide-react'
 import { createFileRoute, notFound } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   Card,
   CardContent,
@@ -33,7 +34,6 @@ import {
   useGetReports,
 } from '@/apis/reports/get-reports'
 import { createUnlockPaymentSession } from '@/apis/unlocks/create-unlock-payment-session'
-import { useQueryClient } from '@tanstack/react-query'
 import { getUnlocksQueryOptions } from '@/apis/unlocks/get-unlocks'
 
 function CompanyDetailsLoadingFallback() {
@@ -166,7 +166,7 @@ function CompanyDetailsContent() {
   const handleUnlock = async (lockedFieldId: number) => {
     setUnlockingFieldId(lockedFieldId)
     try {
-      const base = window.location.origin
+      const base = import.meta.env.VITE_HOME_URL
       const { url } = await createUnlockPaymentSession(
         lockedFieldId,
         `${base}/companies/${id}?unlock=success`,
@@ -320,6 +320,7 @@ function CompanyDetailsContent() {
                         }
                         onClick={() => {
                           const first = lockedFields[0]
+                          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                           if (!first) return
                           const locked = getLockedFieldByFieldName(first.key)
                           if (locked) handleUnlock(locked.id)

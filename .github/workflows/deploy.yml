@@ -2,7 +2,7 @@
 # .github/workflows/deploy.yml  (lives in the mena-frontend repo root)
 #
 # On every push to `main`:
-#   1. Build the frontend Docker image (baking VITE_API_URL into the bundle)
+#   1. Build frontend Docker image (no VITE_API_URL secret: HTTPS uses same-origin /api)
 #   2. Push it to Amazon ECR
 #   3. SSH into EC2 → pull the new image → restart only the frontend container
 #
@@ -12,8 +12,6 @@
 #   AWS_REGION               e.g. us-east-1
 #   ECR_REGISTRY             e.g. 123456789.dkr.ecr.us-east-1.amazonaws.com
 #   ECR_REPO                 e.g. mena-frontend
-#   VITE_API_URL             Backend API base URL baked into the JS bundle
-#                            e.g. https://api.your-domain.com  or  http://<EC2-IP>
 #   EC2_HOST                 Public IP or DNS of the EC2 instance
 #   EC2_USERNAME             SSH user (ubuntu / ec2-user)
 #   EC2_SSH_KEY              Base64-encoded PEM private key (see below)
@@ -37,6 +35,9 @@ jobs:
     name: Build, Push & Deploy
     runs-on: ubuntu-latest
     environment: production
+    defaults:
+      run:
+        working-directory: frontend
 
     steps:
       - name: Checkout code
@@ -63,7 +64,6 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
             -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG \
             -t $ECR_REGISTRY/$ECR_REPO:latest \
             .

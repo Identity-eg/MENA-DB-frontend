@@ -14,10 +14,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# VITE_API_URL is baked into the client bundle at build time
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
-
+# VITE_API_URL is read from .env (must exist in build context; Vite loads it at build time)
 RUN npm run build
 
 # ─── Stage 3: Production image ────────────────────────────────────────────────
