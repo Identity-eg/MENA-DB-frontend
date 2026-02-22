@@ -9,7 +9,7 @@ function getAuthCookieOptions(overrides?: { maxAge?: number }) {
   return {
     httpOnly: true,
     secure: isSecure,
-    sameSite: (isSecure ? 'strict' : 'lax') as 'strict' | 'lax' | 'none',
+    sameSite: isSecure ? 'strict' : 'lax',
     path: '/' as const,
     ...overrides,
   }
