@@ -215,7 +215,7 @@ function CompanyDetailsContent() {
   const handleUnlock = async (lockedFieldId: number) => {
     setUnlockingFieldId(lockedFieldId)
     try {
-      const base = window.location.origin
+      const base = import.meta.env.VITE_HOME_URL
       const { url } = await createUnlockPaymentSession(
         lockedFieldId,
         `${base}/companies/${id}?unlock=success`,

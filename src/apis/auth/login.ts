@@ -37,8 +37,8 @@ const loginServerAction = createServerFn()
     const response = await login({ email, password })
 
     const cookieOptions = getAuthCookieOptions({ maxAge: 60 * 60 * 24 * 7 }) // 7 days
-    setCookie('accessToken', response.accessToken, cookieOptions)
-    setCookie('refreshToken', response.refreshToken, cookieOptions)
+    setCookie('accessToken', response.accessToken, cookieOptions as any)
+    setCookie('refreshToken', response.refreshToken, cookieOptions as any)
 
     return { accessToken: response.accessToken, message: response.message }
   })
