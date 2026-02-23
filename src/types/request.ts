@@ -70,7 +70,7 @@ export type RequestReport = {
   name: string
   description: string
   turnaround: string
-  estimatedPrice: number
+  totalEstimatedPrice: number
   price?: number
   isActive?: boolean
 }
@@ -150,7 +150,7 @@ export type TRequest = {
   id: number
   userId: number
   status: RequestStatusValue
-  estimatedPrice: number
+  totalEstimatedPrice: number
   notes: string | null
   createdAt: string
   updatedAt: string

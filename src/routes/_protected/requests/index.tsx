@@ -229,7 +229,7 @@ function RequestsPage() {
                     <TableHead>Companies & reports</TableHead>
                     <TableHead>Individuals & reports</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
+                    <TableHead className="text-right">Estimated price</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -308,7 +308,7 @@ function RequestsPage() {
                           <StatusPill status={req.status} />
                         </TableCell>
                         <TableCell className="text-right font-medium">
-                          {formatPrice(req.estimatedPrice, req.invoice?.amount)}
+                          {formatPrice(req.totalEstimatedPrice, req.invoice?.amount)}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-1">
