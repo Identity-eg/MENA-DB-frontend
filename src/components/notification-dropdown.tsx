@@ -34,7 +34,7 @@ export function NotificationDropdown() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger>
         <Button
           variant="ghost"
           size="icon"
@@ -88,7 +88,9 @@ export function NotificationDropdown() {
                   )}
                 >
                   <div className="flex w-full items-start justify-between gap-2">
-                    <span className={cn('font-medium', !n.readAt && 'text-primary')}>
+                    <span
+                      className={cn('font-medium', !n.readAt && 'text-primary')}
+                    >
                       {n.title}
                     </span>
                     {!n.readAt && (
