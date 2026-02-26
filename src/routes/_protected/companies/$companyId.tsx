@@ -303,10 +303,10 @@ function CompanyDetailsContent() {
                   className="text-2xl font-bold tracking-tight sm:text-3xl"
                   dir="rtl"
                 >
-                  {company.nameAr ?? company.nameEn}
+                  {company.nameEn}
                 </h1>
                 <p className="text-sm text-muted-foreground truncate">
-                  {company.nameEn}
+                  {company.nameAr}
                 </p>
               </div>
             </div>

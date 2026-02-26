@@ -61,7 +61,6 @@ export type CreateRequestIndividualItem = {
 export type CreateCompanyRequestPayload = {
   companiesReports?: Array<CreateRequestCompanyItem>
   individualsReports?: Array<CreateRequestIndividualItem>
-  notes?: string | null
 }
 
 /** Report shape as included in request list/detail (backend sends price = estimatedPrice) */
@@ -151,7 +150,6 @@ export type TRequest = {
   userId: number
   status: RequestStatusValue
   totalEstimatedPrice: number
-  notes: string | null
   createdAt: string
   updatedAt: string
   /** Present when request has an invoice */
