@@ -1,8 +1,7 @@
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { ChevronRight, Loader2, Plus, Search } from 'lucide-react'
 import z from 'zod'
-import { parseAsString, useQueryState } from 'nuqs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -49,14 +48,11 @@ export const Route = createFileRoute('/_protected/companies/')({
     q: z.string().optional(),
   }),
   loaderDeps(opts) {
-    return { search: opts.search }
+    return { query: opts.search.q }
   },
   loader: ({ context, deps }) => {
-    const query = deps.search.q?.trim()
-
-    if (!query) return {}
+    const query = deps.query?.trim()
     context.queryClient.ensureQueryData(getCompaniesQueryOptions({ q: query }))
-    return {}
   },
 })
 
@@ -133,17 +129,13 @@ function CompanySearchResults({ q }: { q: string }) {
 }
 
 export default function CompanySearchPage() {
-  const [searchParam, setSearchParam] = useQueryState(
-    'q',
-    parseAsString.withDefault('').withOptions({
-      shallow: false,
-      clearOnDefault: true,
-    }),
-  )
+  const { q = '' } = Route.useSearch()
+  const navigate = Route.useNavigate()
 
-  const debounce = useDebounceCallback((e) => setSearchParam(e.target.value))
+  const [value, setValue] = useState(q)
+  const debounce = useDebounceCallback((v) => navigate({ search: { q: v } }))
 
-  const searchQuery = searchParam.trim()
+  const searchQuery = q.trim()
   const hasQuery = searchQuery.length > 0
 
   return (
@@ -158,8 +150,11 @@ export default function CompanySearchPage() {
         <Input
           className="pl-9 h-10"
           placeholder="Search by name, registration number, or keywords..."
-          value={searchParam}
-          onChange={(e) => debounce(e)}
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value)
+            debounce(e.target.value)
+          }}
         />
       </div>
 

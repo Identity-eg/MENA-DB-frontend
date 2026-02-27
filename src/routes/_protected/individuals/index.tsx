@@ -1,8 +1,7 @@
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { ChevronRight, Loader2, Plus, Search, User } from 'lucide-react'
 import z from 'zod'
-import { parseAsString, useQueryState } from 'nuqs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -53,11 +52,9 @@ export const Route = createFileRoute('/_protected/individuals/')({
   },
   loader: ({ context, deps }) => {
     const query = deps.search.q?.trim()
-    if (!query) return {}
     context.queryClient.ensureQueryData(
       getIndividualsQueryOptions({ q: query }),
     )
-    return {}
   },
 })
 
@@ -133,17 +130,13 @@ function IndividualSearchResults({ q }: { q: string }) {
 }
 
 export default function IndividualSearchPage() {
-  const [searchParam, setSearchParam] = useQueryState(
-    'q',
-    parseAsString.withDefault('').withOptions({
-      shallow: false,
-      clearOnDefault: true,
-    }),
-  )
+  const { q = '' } = Route.useSearch()
+  const navigate = Route.useNavigate()
 
-  const debounce = useDebounceCallback((e) => setSearchParam(e.target.value))
+  const [value, setValue] = useState(q)
+  const debounce = useDebounceCallback((v) => navigate({ search: { q: v } }))
 
-  const searchQuery = searchParam.trim()
+  const searchQuery = q.trim()
   const hasQuery = searchQuery.length > 0
 
   return (
@@ -158,8 +151,11 @@ export default function IndividualSearchPage() {
         <Input
           className="pl-9 h-10"
           placeholder="Search by name, ID number, or keywords..."
-          value={searchParam}
-          onChange={(e) => debounce(e.target.value)}
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value)
+            debounce(e.target.value)
+          }}
         />
       </div>
 
