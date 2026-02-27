@@ -53,10 +53,6 @@ export const Route = createFileRoute('/_protected/companies/')({
   },
   loader: ({ context, deps }) => {
     const query = deps.search.q?.trim()
-    const user = context.user
-
-    // Don't run loader if user is not authenticated yet
-    if (!user) return {}
 
     if (!query) return {}
     context.queryClient.ensureQueryData(getCompaniesQueryOptions({ q: query }))
@@ -157,7 +153,8 @@ export default function CompanySearchPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
+      فثسف
+      {/* <PageHeader
         title="Company Search"
         subtitle="Search and verify companies across the MENA region."
       />
@@ -178,7 +175,7 @@ export default function CompanySearchPage() {
         </Suspense>
       ) : (
         <CompaniesStartSearchingState />
-      )}
+      )} */}
     </div>
   )
 }

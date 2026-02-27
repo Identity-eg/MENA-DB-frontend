@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { MenuIcon, Undo2Icon } from 'lucide-react'
 import { Button } from '../ui/button'
-// import { NotificationDropdown } from './notification-dropdown'
+import { NotificationDropdown } from './notification-dropdown'
 import { UserNav } from './user-nav'
 import { useGetMe } from '@/apis/user/get-me'
 
@@ -22,7 +22,7 @@ export function DashboardHeader() {
         </Link>
       </div>
       <div className="flex flex-1 items-center justify-end gap-4">
-        {/* <NotificationDropdown /> */}
+        <NotificationDropdown />
 
         <div className="flex items-center gap-2">
           {user?.user && <UserNav user={user.user} />}
