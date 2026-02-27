@@ -3,7 +3,7 @@ export type TReport = {
   name: string
   description: string
   turnaround: string
-  price: number
+  totalEstimatedPrice: number
   isActive?: boolean
   country?: {
     code: string

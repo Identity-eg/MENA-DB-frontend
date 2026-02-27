@@ -28,7 +28,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   },
   [REQUEST_STATUS.CANCELLED]: {
     label: 'Cancelled',
-    className: 'bg-gray-100 text-gray-600 border-gray-200',
+    className: 'bg-red-100 text-red-600 border-red-200',
   },
 }
 

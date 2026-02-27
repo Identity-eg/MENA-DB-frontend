@@ -156,7 +156,7 @@ function CompanyDetailsContent() {
 
   const totalPrice = reports
     .filter((r) => selectedReports.includes(r.id))
-    .reduce((acc: number, r) => acc + r.price, 0)
+    .reduce((acc: number, r) => acc + r.totalEstimatedPrice, 0)
 
   const getLockedFieldByFieldName = (fieldName: string) =>
     company.lockedFields.find((lf) => lf.lockedType.fieldName === fieldName)
@@ -166,23 +166,23 @@ function CompanyDetailsContent() {
     label: string
     value: string | null
   }> = [
-    {
-      key: 'registrationNumber',
-      label: 'Registration Number',
-      value: company.registrationNumber,
-    },
-    { key: 'legalForm', label: 'Legal Type', value: company.legalForm },
-    { key: 'industry', label: 'Industry', value: company.industry },
-    { key: 'foundedDate', label: 'Founded', value: company.foundedDate },
-    { key: 'size', label: 'Size', value: company.size },
-    { key: 'address', label: 'Address', value: company.address },
-    { key: 'city', label: 'City', value: company.city },
-    { key: 'country', label: 'Country', value: company.country.nameEn },
-    { key: 'phone', label: 'Phone', value: company.phone },
-    { key: 'email', label: 'Email', value: company.email },
-    { key: 'website', label: 'Website', value: company.website },
-    { key: 'description', label: 'Description', value: company.description },
-  ]
+      {
+        key: 'registrationNumber',
+        label: 'Registration Number',
+        value: company.registrationNumber,
+      },
+      { key: 'legalForm', label: 'Legal Type', value: company.legalForm },
+      { key: 'industry', label: 'Industry', value: company.industry },
+      { key: 'foundedDate', label: 'Founded', value: company.foundedDate },
+      { key: 'size', label: 'Size', value: company.size },
+      { key: 'address', label: 'Address', value: company.address },
+      { key: 'city', label: 'City', value: company.city },
+      { key: 'country', label: 'Country', value: company.country.nameEn },
+      { key: 'phone', label: 'Phone', value: company.phone },
+      { key: 'email', label: 'Email', value: company.email },
+      { key: 'website', label: 'Website', value: company.website },
+      { key: 'description', label: 'Description', value: company.description },
+    ]
 
   const purchasedUnlockFields = profileFields.filter(({ key }) => {
     const locked = getLockedFieldByFieldName(key)
@@ -618,7 +618,7 @@ function CompanyDetailsContent() {
                         </div>
                         <div className="shrink-0 text-right">
                           <span className="text-sm font-bold text-primary">
-                            ${report.price}
+                            ${report.totalEstimatedPrice}
                           </span>
                           <p className="text-[10px] text-muted-foreground">
                             Est.
