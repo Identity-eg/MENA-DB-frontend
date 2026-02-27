@@ -52,10 +52,10 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: loginServerAction,
     onSuccess: (data) => {
+      queryClient.clear()
       setAccessToken(data.accessToken)
       router.navigate({ to: '/' })
       router.invalidate()
-      queryClient.invalidateQueries({ queryKey: ['me'] })
     },
   })
 }
