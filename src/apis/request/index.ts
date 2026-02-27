@@ -48,7 +48,9 @@ export const request = async <T>({
     responseType: options.responseType ?? 'json',
   }
 
+  console.log({ config })
   const response = await apiClient(config)
+  console.log({ response })
   return response.data as T
 }
 
