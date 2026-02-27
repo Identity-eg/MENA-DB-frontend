@@ -469,7 +469,8 @@ function RequestDetailsPage() {
                       const { url } = await createRequestPaymentSession(
                         request.id,
                       )
-                      window.location.href = url
+                      console.log({ url })
+                      // window.location.href = url
                     } catch {
                       setIsPaymentRedirecting(false)
                     }

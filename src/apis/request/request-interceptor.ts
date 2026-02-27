@@ -27,7 +27,7 @@ export const getIsomorphicAccessToken = createIsomorphicFn()
 export const setIsomorphicAccessToken = createIsomorphicFn()
   .server((data) => {
     setCookie(
-      'accessToken',
+      'frntAccTkn',
       data.accessToken,
       getAuthCookieOptions({ maxAge: 0.1 * 60 * 1000 }),
     )
