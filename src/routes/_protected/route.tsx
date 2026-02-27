@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_protected')({
 })
 
 function RouteComponent() {
-  useRealtimeNotifications()
+  // useRealtimeNotifications()
   return (
     <DashboardLayout>
       <Outlet />
