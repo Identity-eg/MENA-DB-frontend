@@ -33,7 +33,7 @@ import {
   useGetRequest,
 } from '@/apis/requests/get-request'
 import { downloadRequestInvoicePdf } from '@/apis/requests/download-request-invoice-pdf'
-import { createRequestPaymentSession } from '@/apis/requests/create-request-payment-session'
+import { useCreateRequestPaymentSession } from '@/apis/requests/create-request-payment-session'
 import { useGetMessages } from '@/apis/messages/get-messages'
 import { useSendMessage } from '@/apis/messages/send-message'
 
@@ -342,7 +342,6 @@ function RequestDetailsPage() {
 
   const subjects = useMemo(() => buildSubjects(request), [request])
   const [activeSubjectId, setActiveSubjectId] = useState<string>('')
-  const [isPaymentRedirecting, setIsPaymentRedirecting] = useState(false)
 
   useEffect(() => {
     if (subjects.length > 0) {
@@ -405,6 +404,8 @@ function RequestDetailsPage() {
     [currentStepIndex, isRejectedOrCancelled, submittedDate, updatedDate],
   )
 
+  const { mutate: createPaymentSession, isPending: isPaymentRedirecting } = useCreateRequestPaymentSession()
+
   return (
     <div className="space-y-6 pb-12">
       {/* Breadcrumb */}
@@ -463,18 +464,7 @@ function RequestDetailsPage() {
                   size="sm"
                   className="gap-2 bg-orange-500 hover:bg-orange-600 focus-visible:ring-orange-500 border-none shadow-sm"
                   disabled={isPaymentRedirecting}
-                  onClick={async () => {
-                    setIsPaymentRedirecting(true)
-                    try {
-                      const { url } = await createRequestPaymentSession(
-                        request.id,
-                      )
-                      console.log({ url })
-                      // window.location.href = url
-                    } catch {
-                      setIsPaymentRedirecting(false)
-                    }
-                  }}
+                  onClick={() => createPaymentSession(request.id)}
                 >
                   {isPaymentRedirecting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -536,7 +526,7 @@ function RequestDetailsPage() {
                         ? 'border-primary bg-primary text-primary-foreground'
                         : 'border-muted bg-muted/30 text-muted-foreground',
                       status === step.status &&
-                        'ring-2 ring-primary ring-offset-2 ring-offset-background',
+                      'ring-2 ring-primary ring-offset-2 ring-offset-background',
                     )}
                   >
                     {idx + 1}
