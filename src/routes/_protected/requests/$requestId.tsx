@@ -13,6 +13,7 @@ import {
   MessageCircle,
   Send,
   User,
+  XCircle,
 } from 'lucide-react'
 import { RequestReportCard } from '../../../components/requests/-request-report-card'
 import type {
@@ -708,11 +709,15 @@ function RequestDetailsPage() {
                     'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl',
                     status === REQUEST_STATUS.COMPLETED
                       ? 'bg-emerald-500/15 text-emerald-600 dark:bg-emerald-400/20 dark:text-emerald-400'
-                      : 'bg-primary/10 text-primary',
+                      : status === REQUEST_STATUS.CANCELLED || status === REQUEST_STATUS.REJECTED
+                        ? 'bg-red-500/15 text-red-600 dark:bg-red-400/20 dark:text-red-400'
+                        : 'bg-primary/10 text-primary',
                   )}
                 >
                   {status === REQUEST_STATUS.COMPLETED ? (
                     <CheckCircle2 className="h-5 w-5" />
+                  ) : status === REQUEST_STATUS.CANCELLED || status === REQUEST_STATUS.REJECTED ? (
+                    <XCircle className="h-5 w-5" />
                   ) : (
                     <Activity className="h-5 w-5 animate-pulse" />
                   )}
