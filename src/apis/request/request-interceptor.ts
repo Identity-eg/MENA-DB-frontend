@@ -3,7 +3,6 @@ import { createIsomorphicFn } from '@tanstack/react-start'
 import type { InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { getAuthCookieOptions } from '@/lib/cookie-options'
-import { logger } from '@/lib/logger'
 
 export const requestSuccessInterceptor = (
   config: InternalAxiosRequestConfig,
@@ -36,15 +35,3 @@ export const setIsomorphicAccessToken = createIsomorphicFn()
   .client((data) => {
     useAuthStore.getState().setAccessToken(data.accessToken)
   })
-
-export const responseErrorInterceptor = (error: any) => {
-  logger.error({
-    msg: 'API Request Failed',
-    method: error.config?.method,
-    url: error.config?.url,
-    status: error.response?.status,
-    error: error.message,
-  })
-  return Promise.reject(error)
-}
-
