@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { setCookie } from '@tanstack/react-start/server'
@@ -46,6 +46,7 @@ const loginServerAction = createServerFn()
 export const useLogin = () => {
   const { setAccessToken } = useAuthStore()
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: loginServerAction,
@@ -53,6 +54,7 @@ export const useLogin = () => {
       setAccessToken(data.accessToken)
       router.navigate({ to: '/' })
       router.invalidate()
+      queryClient.invalidateQueries({ queryKey: ['me'] })
     },
   })
 }

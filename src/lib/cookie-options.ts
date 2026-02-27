@@ -5,11 +5,11 @@
  * or send the cookie and users will be logged out on next request / refresh.
  */
 function getAuthCookieOptions(overrides?: { maxAge?: number }) {
-  const isSecure = process.env.COOKIE_SECURE === 'true'
+  const isProduction = process.env.NODE_ENV === 'production'
   return {
     httpOnly: true,
-    secure: isSecure,
-    sameSite: isSecure ? 'strict' : 'lax',
+    secure: isProduction,
+    sameSite: (isProduction ? 'strict' : 'lax') as any,
     path: '/' as const,
     ...overrides,
   }
