@@ -14,6 +14,7 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
 import appCss from '../styles.css?url'
 
+import { logger } from '../lib/logger'
 import type { QueryClient } from '@tanstack/react-query'
 import type { TUser } from '@/types/user'
 import { getMeQueryOptions } from '@/apis/user/get-me'
@@ -62,6 +63,21 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
 
   shellComponent: RootDocument,
+  errorComponent: ({ error }) => {
+    logger.error({ msg: 'Unhandled Rendering Error', error })
+    return (
+      <div className="p-4 bg-red-50 text-red-900 border border-red-200 rounded">
+        <h1 className="text-xl font-bold">Something went wrong</h1>
+        <p className="mt-2">We've encountered an unexpected error. Our team has been notified.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+        >
+          Reload Page
+        </button>
+      </div>
+    )
+  },
 })
 
 const useSyncClientCredentials = () => {
