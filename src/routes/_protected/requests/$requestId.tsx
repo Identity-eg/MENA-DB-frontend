@@ -14,7 +14,7 @@ import {
   Send,
   User,
 } from 'lucide-react'
-import { RequestReportRow } from './-request-report-row'
+import { RequestReportCard } from '../../../components/requests/-request-report-card'
 import type {
   RequestReport,
   RequestReportItem,
@@ -680,7 +680,7 @@ function RequestDetailsPage() {
                 </h3>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {selectedSubject.reports.map((report) => (
-                    <RequestReportRow
+                    <RequestReportCard
                       key={report.id}
                       report={report}
                       status={status}

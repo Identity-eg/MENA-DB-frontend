@@ -44,6 +44,7 @@ export type CreateRequestCompanyItem = {
 
 /** Per-individual data + report selection when creating a request */
 export type CreateRequestIndividualItem = {
+  individualId?: number
   fullName: string
   email?: string | null
   phone?: string | null

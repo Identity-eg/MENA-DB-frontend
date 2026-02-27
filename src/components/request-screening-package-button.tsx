@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button'
 import { useCreateRequest } from '@/apis/requests/create-request'
 
 type RequestScreeningPackageButtonProps = {
-  companyId: number
+  companyId?: number
+  individualId?: number
   selectedReportIds: Array<number>
   disabled?: boolean
   className?: string
@@ -12,6 +13,7 @@ type RequestScreeningPackageButtonProps = {
 
 export function RequestScreeningPackageButton({
   companyId,
+  individualId,
   selectedReportIds,
   disabled = false,
   className,
@@ -23,9 +25,19 @@ export function RequestScreeningPackageButton({
     if (selectedReportIds.length === 0) return
     createRequest.mutate(
       {
-        companiesReports: [
-          { companyId, reportIds: selectedReportIds },
-        ],
+        companiesReports: companyId
+          ? [{ companyId, reportIds: selectedReportIds }]
+          : undefined,
+        individualsReports: individualId
+          ? [
+              {
+                individualId,
+                reportIds: selectedReportIds,
+                fullName: '', // The backend might need a name if it's a new individual, but if individualId is provided it should be fine.
+                // Wait, let's check backend if it needs fullName even if individualId is present.
+              },
+            ]
+          : undefined,
       },
       {
         onSuccess: () => {

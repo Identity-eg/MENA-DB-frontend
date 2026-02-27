@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { CreditCard, Download, Eye, Search } from 'lucide-react'
+import { Eye, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { RequestReportItem, TRequest } from '@/types/request'
 import {
@@ -52,7 +52,9 @@ function getRequestReports(req: TRequest): Array<RequestReportItem> {
 }
 
 /** Derive companies for search (from requestReports when req.companies not present) */
-function getCompaniesForSearch(req: TRequest): Array<{ nameEn: string; nameAr: string | null }> {
+function getCompaniesForSearch(
+  req: TRequest,
+): Array<{ nameEn: string; nameAr: string | null }> {
   if (req.companies?.length) return req.companies
   const reports = getRequestReports(req)
   const seen = new Set<number>()
@@ -191,7 +193,7 @@ function RequestsPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search by request ID, company or individual"
-            className="pl-9"
+            className="pl-9 h-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -200,7 +202,7 @@ function RequestsPage() {
           value={statusFilter}
           onValueChange={(v) => setStatusFilter(v ?? 'all')}
         >
-          <SelectTrigger className="h-9 w-[180px]">
+          <SelectTrigger className="!h-10 w-[180px]">
             <SelectValue placeholder="All statuses" />
           </SelectTrigger>
           <SelectContent>
@@ -238,7 +240,9 @@ function RequestsPage() {
                     <TableHead>Companies & reports</TableHead>
                     <TableHead>Individuals & reports</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Estimated price</TableHead>
+                    <TableHead className="text-right">
+                      Estimated price
+                    </TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -317,38 +321,20 @@ function RequestsPage() {
                           <StatusPill status={req.status} />
                         </TableCell>
                         <TableCell className="text-right font-medium">
-                          {formatPrice(req.totalEstimatedPrice, req.invoice?.amount)}
+                          {formatPrice(
+                            req.totalEstimatedPrice,
+                            req.invoice?.amount,
+                          )}
                         </TableCell>
                         <TableCell className="text-right">
-                          <div className="flex justify-end gap-1">
-                            {req.status ===
-                              REQUEST_STATUS.INVOICE_GENERATED && (
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="text-purple-600 hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-950/50"
-                              >
-                                <CreditCard className="h-4 w-4" />
-                              </Button>
-                            )}
-                            {req.status === REQUEST_STATUS.COMPLETED && (
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="text-green-600 hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-950/50"
-                              >
-                                <Download size={16} />
-                              </Button>
-                            )}
-                            <Link
-                              to="/requests/$requestId"
-                              params={{ requestId: String(req.id) }}
-                            >
-                              <Button variant="ghost" size="icon">
-                                <Eye size={16} />
-                              </Button>
-                            </Link>
-                          </div>
+                          <Link
+                            to="/requests/$requestId"
+                            params={{ requestId: String(req.id) }}
+                          >
+                            <Button variant="ghost" size="icon">
+                              <Eye size={16} />
+                            </Button>
+                          </Link>
                         </TableCell>
                       </TableRow>
                     )

@@ -55,9 +55,8 @@ export default function LoginPage() {
 
 const loginSchema = z.object({
   email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid work email.'),
+    .email('Please enter a valid work email.')
+    .min(1, 'Email is required'),
   password: z.string().min(1, 'Password is required'),
 })
 
@@ -66,7 +65,7 @@ type LoginValues = z.infer<typeof loginSchema>
 const LoginForm = () => {
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: 'admin@menabusiness.com', password: 'password123' },
+    defaultValues: { email: 'verified@example.com', password: 'password123' },
   })
 
   const loginMutation = useLogin()

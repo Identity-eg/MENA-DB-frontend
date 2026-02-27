@@ -48,7 +48,7 @@ function reportStatusLabel(s: RequestReportStatusValue): string {
   return labels[s] ?? s
 }
 
-export function RequestReportRow({ report, status }: RequestReportRowProps) {
+export function RequestReportCard({ report, status }: RequestReportRowProps) {
   const { mutate: downloadReportUpload, isPending: isDownloading } =
     useRequestReportUploadDownload()
   const hasReportFile = !!report.upload
