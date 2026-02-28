@@ -156,7 +156,7 @@ function CompanyDetailsContent() {
 
   const totalPrice = reports
     .filter((r) => selectedReports.includes(r.id))
-    .reduce((acc: number, r) => acc + r.totalEstimatedPrice, 0)
+    .reduce((acc: number, r) => acc + r.estimatedPrice, 0)
 
   const getLockedFieldByFieldName = (fieldName: string) =>
     company.lockedFields.find((lf) => lf.lockedType.fieldName === fieldName)
@@ -618,7 +618,7 @@ function CompanyDetailsContent() {
                         </div>
                         <div className="shrink-0 text-right">
                           <span className="text-sm font-bold text-primary">
-                            ${report.totalEstimatedPrice}
+                            ${report.estimatedPrice}
                           </span>
                           <p className="text-[10px] text-muted-foreground">
                             Est.
