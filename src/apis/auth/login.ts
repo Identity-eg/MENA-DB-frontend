@@ -54,7 +54,7 @@ export const useLogin = () => {
     onSuccess: (data) => {
       queryClient.clear()
       setAccessToken(data.accessToken)
-      router.navigate({ to: '/' })
+      router.navigate({ to: '/dashboard' })
       router.invalidate()
     },
   })

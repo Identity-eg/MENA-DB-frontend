@@ -1,27 +1,81 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { CheckCircle2, Clock, FileText, Loader2, Unlock } from 'lucide-react'
+import type { RequestStatusValue, TRequest } from '@/types/request'
+import { REQUEST_STATUS } from '@/types/request'
+import {
+  getUnlocksQueryOptions,
+  useGetUnlocks,
+} from '@/apis/unlocks/get-unlocks'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/page-header'
 import { DashboardRecentRequests } from '@/components/dashboard-recent-requests'
-import { getRequestsQueryOptions } from '@/apis/requests/get-requests'
+import {
+  getRequestsQueryOptions,
+  useGetRequests,
+} from '@/apis/requests/get-requests'
+import { useGetMe } from '@/apis/user/get-me'
 
 export const Route = createFileRoute('/_protected/dashboard/')({
   component: DashboardPage,
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(getRequestsQueryOptions())
+    await Promise.all([
+      context.queryClient.ensureQueryData(getRequestsQueryOptions()),
+      context.queryClient.ensureQueryData(getUnlocksQueryOptions()),
+    ])
     return {}
   },
 })
 
+const activeRequestStatuses = new Set<RequestStatusValue>([
+  REQUEST_STATUS.UNDER_REVIEW,
+  REQUEST_STATUS.INVOICE_GENERATED,
+  REQUEST_STATUS.PAID,
+  REQUEST_STATUS.PROCESSING,
+])
+
+const formatUsdAmount = (amount: number) =>
+  new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(amount)
+
 function DashboardPage() {
+  const { data: requestsData } = useGetRequests()
+  const { data: unlocksData } = useGetUnlocks()
+
+  const requests: Array<TRequest> = requestsData.data
+  const unlocks = unlocksData.data
+
+  const activeRequestsCount = requests.filter((request) =>
+    activeRequestStatuses.has(request.status),
+  ).length
+
+  const pendingPaymentRequests = requests.filter(
+    (request) => request.status === REQUEST_STATUS.INVOICE_GENERATED,
+  )
+  const pendingPaymentsTotal = pendingPaymentRequests.reduce(
+    (sum, request) =>
+      sum + (request.invoice?.amount ?? request.totalEstimatedPrice),
+    0,
+  )
+
+  const completedRequestsCount = requests.filter(
+    (request) => request.status === REQUEST_STATUS.COMPLETED,
+  ).length
+
+  const { data: meData } = useGetMe()
+
+  const user = meData?.user
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <PageHeader
           title="Dashboard"
-          subtitle="Welcome back, John. Here's your compliance overview."
+          subtitle={`Welcome back, ${user?.name}. Here's your compliance overview.`}
         />
         <Link to="/requests/new/individual">
           <Button>New Request</Button>
@@ -37,8 +91,10 @@ function DashboardPage() {
             <Clock className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">+2 from yesterday</p>
+            <div className="text-2xl font-bold">{activeRequestsCount}</div>
+            <p className="text-xs text-muted-foreground">
+              {requests.length} total request{requests.length === 1 ? '' : 's'}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -49,8 +105,12 @@ function DashboardPage() {
             <FileText className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">Total: $1,240</p>
+            <div className="text-2xl font-bold">
+              {pendingPaymentRequests.length}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total due: {formatUsdAmount(pendingPaymentsTotal)}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -59,8 +119,8 @@ function DashboardPage() {
             <CheckCircle2 className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">148</div>
-            <p className="text-xs text-muted-foreground">All time reports</p>
+            <div className="text-2xl font-bold">{completedRequestsCount}</div>
+            <p className="text-xs text-muted-foreground">Completed requests</p>
           </CardContent>
         </Card>
         <Link to="/unlocks">
@@ -71,10 +131,10 @@ function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold group-hover:text-primary transition-colors">
-                24
+                {unlocks.length}
               </div>
               <p className="text-xs text-muted-foreground">
-                Company Intelligence
+                Company intelligence unlocks
               </p>
             </CardContent>
           </Card>
