@@ -140,12 +140,6 @@ function CompanyDetailsContent() {
   const [showUnlockSuccessBanner, setShowUnlockSuccessBanner] = useState(false)
 
   useEffect(() => {
-    // Debug: Log when useEffect runs in production
-    if (process.env.NODE_ENV === 'production') {
-      console.log('Companies useEffect - search.unlock:', search.unlock)
-      console.log('Companies useEffect - user authenticated:', !!company)
-    }
-
     if (search.unlock === 'success') {
       setShowUnlockSuccessBanner(true)
       queryClient.invalidateQueries({
@@ -158,7 +152,7 @@ function CompanyDetailsContent() {
       const t = setTimeout(() => setShowUnlockSuccessBanner(false), 5000)
       return () => clearTimeout(t)
     }
-  }, [id, queryClient, search.unlock, navigate, company])
+  }, [id, queryClient, search.unlock, navigate])
 
   const toggleReport = (reportId: number) => {
     setSelectedReports((prev) =>

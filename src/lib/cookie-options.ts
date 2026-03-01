@@ -5,10 +5,13 @@
  * or send the cookie and users will be logged out on next request / refresh.
  */
 function getAuthCookieOptions(overrides?: { maxAge?: number }) {
+  const isProduction = process.env.NODE_ENV === 'production'
   return {
     httpOnly: true,
+    secure: isProduction,
     sameSite: 'lax' as const,
     path: '/' as const,
+    domain: isProduction ? '.ident-ity.com' : undefined,
     ...overrides,
   }
 }
