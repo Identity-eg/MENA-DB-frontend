@@ -14,7 +14,13 @@ import {
   Sparkles,
   Unlock,
 } from 'lucide-react'
-import { Link, createFileRoute, notFound } from '@tanstack/react-router'
+import {
+  Link,
+  createFileRoute,
+  notFound,
+  useNavigate,
+} from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   Card,
   CardContent,
@@ -32,10 +38,8 @@ import {
   getCompanyQueryOptions,
   useGetCompany,
 } from '@/apis/company/get-company'
-import type { TReport } from '@/types/report'
 import { createUnlockPaymentSession } from '@/apis/unlocks/create-unlock-payment-session'
 import { createUnlockAllPaymentSession } from '@/apis/unlocks/create-unlock-all-payment-session'
-import { useQueryClient } from '@tanstack/react-query'
 import { getUnlocksQueryOptions } from '@/apis/unlocks/get-unlocks'
 
 function CompanyDetailsLoadingFallback() {
@@ -59,6 +63,9 @@ function CompanyDetailsLoadingFallback() {
 
 export const Route = createFileRoute('/_protected/companies/$companyId')({
   component: CompanyDetailsPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    unlock: search.unlock as string | undefined,
+  }),
   loader: async ({ context, params }) => {
     const companyId = params.companyId
 
@@ -119,11 +126,13 @@ export const Route = createFileRoute('/_protected/companies/$companyId')({
 
 function CompanyDetailsContent() {
   const { companyId } = Route.useParams()
+  const search = Route.useSearch()
+  const navigate = useNavigate()
   const id = Number(companyId)
   const queryClient = useQueryClient()
   const { data: companyData } = useGetCompany(id)
   const company = companyData.data
-  const reports: TReport[] = company.reports ?? []
+  const reports = company.reports
 
   const [selectedReports, setSelectedReports] = useState<Array<number>>([])
   const [unlockingFieldId, setUnlockingFieldId] = useState<number | null>(null)
@@ -131,8 +140,7 @@ function CompanyDetailsContent() {
   const [showUnlockSuccessBanner, setShowUnlockSuccessBanner] = useState(false)
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('unlock') === 'success') {
+    if (search.unlock === 'success') {
       setShowUnlockSuccessBanner(true)
       queryClient.invalidateQueries({
         queryKey: getCompanyQueryOptions(id).queryKey,
@@ -140,11 +148,11 @@ function CompanyDetailsContent() {
       queryClient.invalidateQueries({
         queryKey: getUnlocksQueryOptions().queryKey,
       })
-      window.history.replaceState(null, '', window.location.pathname)
+      navigate({ to: '.', search: {} })
       const t = setTimeout(() => setShowUnlockSuccessBanner(false), 5000)
       return () => clearTimeout(t)
     }
-  }, [id, queryClient])
+  }, [id, queryClient, search.unlock, navigate])
 
   const toggleReport = (reportId: number) => {
     setSelectedReports((prev) =>
@@ -166,23 +174,23 @@ function CompanyDetailsContent() {
     label: string
     value: string | null
   }> = [
-      {
-        key: 'registrationNumber',
-        label: 'Registration Number',
-        value: company.registrationNumber,
-      },
-      { key: 'legalForm', label: 'Legal Type', value: company.legalForm },
-      { key: 'industry', label: 'Industry', value: company.industry },
-      { key: 'foundedDate', label: 'Founded', value: company.foundedDate },
-      { key: 'size', label: 'Size', value: company.size },
-      { key: 'address', label: 'Address', value: company.address },
-      { key: 'city', label: 'City', value: company.city },
-      { key: 'country', label: 'Country', value: company.country.nameEn },
-      { key: 'phone', label: 'Phone', value: company.phone },
-      { key: 'email', label: 'Email', value: company.email },
-      { key: 'website', label: 'Website', value: company.website },
-      { key: 'description', label: 'Description', value: company.description },
-    ]
+    {
+      key: 'registrationNumber',
+      label: 'Registration Number',
+      value: company.registrationNumber,
+    },
+    { key: 'legalForm', label: 'Legal Type', value: company.legalForm },
+    { key: 'industry', label: 'Industry', value: company.industry },
+    { key: 'foundedDate', label: 'Founded', value: company.foundedDate },
+    { key: 'size', label: 'Size', value: company.size },
+    { key: 'address', label: 'Address', value: company.address },
+    { key: 'city', label: 'City', value: company.city },
+    { key: 'country', label: 'Country', value: company.country.nameEn },
+    { key: 'phone', label: 'Phone', value: company.phone },
+    { key: 'email', label: 'Email', value: company.email },
+    { key: 'website', label: 'Website', value: company.website },
+    { key: 'description', label: 'Description', value: company.description },
+  ]
 
   const purchasedUnlockFields = profileFields.filter(({ key }) => {
     const locked = getLockedFieldByFieldName(key)
@@ -676,7 +684,7 @@ function CompanyDetailsContent() {
               <div className="flex justify-between py-3 text-sm">
                 <span className="text-muted-foreground">Industry</span>
                 <span className="font-medium text-right">
-                  {company.industry ?? '—'}
+                  {company.industry}
                 </span>
               </div>
               {company.legalForm && (
