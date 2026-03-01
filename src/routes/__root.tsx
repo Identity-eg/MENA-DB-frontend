@@ -34,11 +34,45 @@ const getTokenFromServer = createServerFn().handler(() => {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ context }) => {
     const accessToken = getIsomorphicAccessToken()
+
+    // Debug: Log authentication state in production SSR
+    if (
+      typeof window === 'undefined' &&
+      process.env.NODE_ENV === 'production'
+    ) {
+      console.log('SSR Auth Debug - Token exists:', !!accessToken)
+      console.log('SSR Auth Debug - Token name:', 'frntAccTkn')
+    }
+
     if (!accessToken) {
+      if (
+        typeof window === 'undefined' &&
+        process.env.NODE_ENV === 'production'
+      ) {
+        console.log('SSR Auth Debug - No token found, user will be null')
+      }
       return { user: null }
     }
-    const user = await context.queryClient.ensureQueryData(getMeQueryOptions())
-    return { user }
+
+    try {
+      const user =
+        await context.queryClient.ensureQueryData(getMeQueryOptions())
+      if (
+        typeof window === 'undefined' &&
+        process.env.NODE_ENV === 'production'
+      ) {
+        console.log('SSR Auth Debug - User loaded successfully:', !!user)
+      }
+      return { user }
+    } catch (error) {
+      if (
+        typeof window === 'undefined' &&
+        process.env.NODE_ENV === 'production'
+      ) {
+        console.error('SSR Auth Debug - Failed to load user:', error)
+      }
+      return { user: null }
+    }
   },
   notFoundComponent: NotFoundPage,
   head: () => ({
