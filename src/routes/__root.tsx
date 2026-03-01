@@ -26,9 +26,6 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ context }) => {
-    // On server: reads cookie — works perfectly
-    // On client: this return value was serialized into HTML by SSR,
-    // so TanStack Router provides it synchronously — no fetch needed
     const accessToken = getIsomorphicAccessToken()
 
     if (!accessToken) {
