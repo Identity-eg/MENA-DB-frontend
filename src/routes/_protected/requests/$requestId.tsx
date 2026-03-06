@@ -428,35 +428,35 @@ function RequestDetailsPage() {
       {/* Hero header */}
       <header className="relative overflow-hidden rounded-xl sm:rounded-2xl border bg-linear-to-br from-card via-card to-muted/30 px-4 py-5 shadow-sm sm:px-8 sm:py-7">
         <div className="absolute right-0 top-0 h-24 w-40 bg-linear-to-bl from-primary/5 to-transparent rounded-bl-full pointer-events-none" />
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <FileText className="h-5 w-5" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
-                  {formatRequestId(request.id)}
-                </h1>
-                <div className="mt-1 flex flex-wrap items-center gap-2">
-                  <StatusPill status={status} className="shrink-0" />
-                  <span className="text-sm text-muted-foreground">
-                    {subjects.length > 0
-                      ? `${subjects.length} subject${subjects.length === 1 ? '' : 's'} · ${submittedDate}`
-                      : submittedDate}
-                  </span>
-                </div>
+        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          {/* Title + status */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-lg font-bold tracking-tight sm:text-2xl lg:text-3xl truncate">
+                {formatRequestId(request.id)}
+              </h1>
+              <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                <StatusPill status={status} className="shrink-0" />
+                <span className="text-xs text-muted-foreground">
+                  {subjects.length > 0
+                    ? `${subjects.length} subject${subjects.length === 1 ? '' : 's'} · ${submittedDate}`
+                    : submittedDate}
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-stretch gap-3">
+          {/* Action buttons + amounts */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             {status === REQUEST_STATUS.INVOICE_GENERATED && (
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-2"
+                  className="flex-1 sm:flex-none gap-2"
                   onClick={() => downloadRequestInvoicePdf(request.id)}
                 >
                   <FileDown className="h-4 w-4" />
@@ -464,7 +464,7 @@ function RequestDetailsPage() {
                 </Button>
                 <Button
                   size="sm"
-                  className="gap-2 bg-orange-500 hover:bg-orange-600 focus-visible:ring-orange-500 border-none shadow-sm"
+                  className="flex-1 sm:flex-none gap-2 bg-orange-500 hover:bg-orange-600 focus-visible:ring-orange-500 border-none shadow-sm"
                   disabled={isPaymentRedirecting}
                   onClick={() => createPaymentSession(request.id)}
                 >
@@ -477,21 +477,21 @@ function RequestDetailsPage() {
                 </Button>
               </div>
             )}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              <div className="rounded-lg sm:rounded-xl border px-3 py-2 sm:px-4 sm:py-2.5">
+            <div className="flex items-center gap-2">
+              <div className="flex-1 sm:flex-none rounded-lg border px-3 py-2">
                 <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Estimated
                 </p>
-                <p className="text-base sm:text-lg font-bold tabular-nums tracking-tight">
+                <p className="text-base font-bold tabular-nums tracking-tight">
                   ${totalEstimatedPrice.toLocaleString()}
                 </p>
               </div>
               {request.invoice != null && (
-                <div className="rounded-lg sm:rounded-xl border border-primary/30 bg-primary/5 px-3 py-2 sm:px-4 sm:py-2.5">
+                <div className="flex-1 sm:flex-none rounded-lg border border-primary/30 bg-primary/5 px-3 py-2">
                   <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                     Amount due
                   </p>
-                  <p className="text-base sm:text-lg font-bold tabular-nums tracking-tight text-primary">
+                  <p className="text-base font-bold tabular-nums tracking-tight text-primary">
                     ${request.invoice.amount.toLocaleString()}
                   </p>
                 </div>
@@ -501,32 +501,44 @@ function RequestDetailsPage() {
         </div>
       </header>
 
-      {/* Timeline stepper */}
+      {/* Timeline stepper — horizontally scrollable on small screens */}
       <nav
         aria-label="Request status"
-        className="rounded-xl border bg-card px-2 py-3 sm:px-4 sm:py-4 overflow-x-auto"
+        className="rounded-xl border bg-card px-3 py-4 overflow-x-auto"
       >
-        <div className="flex w-full items-start min-w-100 sm:min-w-0">
+        <div
+          className="flex items-start"
+          style={{ minWidth: `${timeline.length * 90}px` }}
+        >
           {timeline.map((step, idx) => (
             <div
               key={step.status}
-              className={cn(
-                'flex flex-1 min-w-0 flex-col items-center gap-1.5 sm:gap-2 text-center',
-                idx < timeline.length - 1 && 'mr-1 sm:mr-4',
-              )}
+              className="relative flex flex-1 flex-col items-center gap-2 text-center"
             >
+              {/* Connector line (drawn between steps) */}
+              {idx < timeline.length - 1 && (
+                <div
+                  className={cn(
+                    'absolute top-4 left-1/2 h-0.5',
+                    step.active ? 'bg-primary/50' : 'bg-muted',
+                  )}
+                  style={{ width: '100%', left: '50%' }}
+                />
+              )}
+
               <div
                 role="listitem"
                 aria-current={status === step.status ? 'step' : undefined}
-                className="flex w-full flex-col items-center gap-1.5 sm:gap-2"
+                className="relative z-10 flex flex-col items-center gap-2"
               >
                 <div className="relative flex flex-col items-center">
+                  {/* Animated ring for current step */}
                   {status === step.status && (
-                    <span className="absolute inset-0 z-0 h-8 w-8 sm:h-10 sm:w-10 animate-ping rounded-full bg-primary/40" />
+                    <span className="absolute inset-0 z-0 h-8 w-8 animate-ping rounded-full bg-primary/40" />
                   )}
                   <span
                     className={cn(
-                      'relative z-10 flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full border-2 text-[10px] sm:text-xs font-bold transition-all',
+                      'relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-bold transition-all',
                       step.active
                         ? 'border-primary bg-primary text-primary-foreground'
                         : 'border-muted bg-muted/30 text-muted-foreground',
@@ -536,19 +548,10 @@ function RequestDetailsPage() {
                   >
                     {idx + 1}
                   </span>
-                  {idx < timeline.length - 1 && (
-                    <div
-                      className={cn(
-                        'absolute left-1/2 top-4 sm:top-5 h-0.5 w-full min-w-6 -translate-x-1/2',
-                        step.active ? 'bg-primary/50' : 'bg-muted',
-                      )}
-                      style={{ width: 'calc(100% + 0.5rem)' }}
-                    />
-                  )}
                 </div>
                 <span
                   className={cn(
-                    'text-[10px] sm:text-xs font-medium leading-tight',
+                    'text-[10px] font-medium leading-tight px-1 max-w-20',
                     step.active ? 'text-foreground' : 'text-muted-foreground',
                   )}
                 >
@@ -593,7 +596,7 @@ function RequestDetailsPage() {
                       aria-selected={activeSubjectId === s.id}
                       onClick={() => setActiveSubjectId(s.id)}
                       className={cn(
-                        'shrink-0 lg:shrink rounded-xl border p-3 text-left transition-all flex items-center gap-3 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:w-full',
+                        'min-w-40 shrink-0 lg:min-w-0 lg:shrink rounded-xl border p-3 text-left transition-all flex items-center gap-3 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:w-full',
                         activeSubjectId === s.id
                           ? 'border-primary bg-primary text-primary-foreground shadow-md'
                           : 'border-border bg-card hover:border-primary/40 hover:bg-muted/30 text-foreground',
@@ -601,7 +604,7 @@ function RequestDetailsPage() {
                     >
                       <span
                         className={cn(
-                          'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
+                          'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
                           activeSubjectId === s.id
                             ? 'bg-primary-foreground/20'
                             : 'bg-muted',
