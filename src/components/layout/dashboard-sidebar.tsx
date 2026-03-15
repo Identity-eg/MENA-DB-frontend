@@ -71,21 +71,20 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
       </nav>
 
       <div className="border-t p-4">
-        <Link to="/">
-          <Button
-            onClick={async () => {
-              await clearServerCredentials()
-              clearAccessToken()
-              queryClient.clear()
-              router.invalidate()
-            }}
-            variant="ghost"
-            className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
-        </Link>
+        <Button
+          onClick={async () => {
+            await clearServerCredentials()
+            clearAccessToken()
+            queryClient.clear()
+            router.invalidate()
+            router.navigate({ to: '/' })
+          }}
+          variant="ghost"
+          className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </Button>
       </div>
     </div>
   )
