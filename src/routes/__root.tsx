@@ -14,7 +14,6 @@ import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 import type { TUser } from '@/types/user'
 import { getMeQueryOptions } from '@/apis/user/get-me'
-import { useAuthStore } from '@/stores/auth'
 import { getIsomorphicAccessToken } from '@/apis/request/request-interceptor'
 import { NotFoundPage } from '@/components/layout/not-found-page'
 
@@ -61,14 +60,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const { accessToken } = Route.useRouteContext()
-
-  const store = useAuthStore()
-
-  if (accessToken && !store.accessToken) {
-    store.setAccessToken(accessToken)
-  }
-
   return (
     <html lang="en">
       <head>

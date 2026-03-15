@@ -9,11 +9,9 @@ import {
   X,
 } from 'lucide-react'
 
-import { Link, useRouter } from '@tanstack/react-router'
-import { useQueryClient } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
 import { Button } from '../ui/button'
-import { clearServerCredentials } from '@/lib/auth'
-import { useAuthStore } from '@/stores/auth'
+import { useLogout } from '@/hooks/use-logout'
 
 const items = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -29,9 +27,7 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const { clearAccessToken } = useAuthStore()
+  const logout = useLogout()
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
@@ -72,13 +68,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
 
       <div className="border-t p-4">
         <Button
-          onClick={async () => {
-            await clearServerCredentials()
-            clearAccessToken()
-            queryClient.clear()
-            router.invalidate()
-            router.navigate({ to: '/', replace: true })
-          }}
+          onClick={async () => await logout()}
           variant="ghost"
           className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
         >

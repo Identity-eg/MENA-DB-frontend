@@ -27,11 +27,8 @@ export const getIsomorphicAccessToken = createIsomorphicFn()
 
 export const setIsomorphicAccessToken = createIsomorphicFn()
   .server((data) => {
-    setCookie(
-      ACCESS_TOKEN_NAME,
-      data.accessToken,
-      getAuthCookieOptions({ maxAge: 0.1 * 60 * 1000 }),
-    )
+    const { accessCookieOptions } = getAuthCookieOptions()
+    setCookie(ACCESS_TOKEN_NAME, data.accessToken, accessCookieOptions)
   })
   .client((data) => {
     useAuthStore.getState().setAccessToken(data.accessToken)
