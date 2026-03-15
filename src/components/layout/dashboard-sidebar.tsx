@@ -77,7 +77,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
             clearAccessToken()
             queryClient.clear()
             router.invalidate()
-            router.navigate({ to: '/' })
+            router.navigate({ to: '/', replace: true })
           }}
           variant="ghost"
           className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
