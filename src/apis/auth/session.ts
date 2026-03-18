@@ -1,4 +1,5 @@
 import { getCookie, setCookie } from '@tanstack/react-start/server'
+import { createServerFn } from '@tanstack/react-start'
 import type { TUser } from '@/types/user'
 import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@/constants/auth'
 import { getAuthCookieOptions } from '@/lib/cookie-options'
@@ -48,23 +49,25 @@ async function fetchUser(token: string): Promise<TUser | null> {
 
 /**
  * Resolves the auth session server-side. Reads the access token cookie; if
- * missing or expired, attempts a silent refresh using the refresh token cookie.
+ * missing, attempts a silent refresh using the refresh token cookie.
  * Returns a fully-resolved { accessToken, user } or null.
  *
- * Uses native fetch — no Axios, no interceptors, no workarounds.
- * Call this from the root beforeLoad (server path only).
+ * Wrapped in createServerFn so the bundler isolates all server-only imports
+ * (@tanstack/react-start/server) from the client bundle.
  */
-export async function resolveAuthSession(): Promise<AuthSession | null> {
-  let accessToken = getCookie(ACCESS_TOKEN_NAME) ?? null
+export const resolveAuthSession = createServerFn().handler(
+  async (): Promise<AuthSession | null> => {
+    let accessToken = getCookie(ACCESS_TOKEN_NAME) ?? null
 
-  if (!accessToken) {
-    accessToken = await refreshAccessToken()
-  }
+    if (!accessToken) {
+      accessToken = await refreshAccessToken()
+    }
 
-  if (!accessToken) return null
+    if (!accessToken) return null
 
-  const user = await fetchUser(accessToken)
-  if (!user) return null
+    const user = await fetchUser(accessToken)
+    if (!user) return null
 
-  return { accessToken, user }
-}
+    return { accessToken, user }
+  },
+)
