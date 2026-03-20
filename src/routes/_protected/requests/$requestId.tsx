@@ -708,7 +708,7 @@ function RequestDetailsPage() {
 
           <div className="grid gap-4 sm:gap-6 items-start grid-cols-1 lg:grid-cols-2">
             <Card>
-              <CardContent className="flex items-start gap-4 pt-6">
+              <CardContent className="flex items-start gap-4">
                 <span
                   className={cn(
                     'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl',
